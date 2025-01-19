@@ -10,7 +10,7 @@ import Foundation
 struct SearchResponse: Decodable {
     let total: Int
     let totalPages: Int
-    let results: [Result]
+    var results: [Result]
     
     enum CodingKeys: String, CodingKey {
         case total, results

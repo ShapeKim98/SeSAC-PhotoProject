@@ -35,12 +35,10 @@ class SearchCollectionViewCell: UICollectionViewCell {
     }
     
     func cellForItemAt(_ result: SearchResponse.Result) {
-        let size = imageView.bounds.size
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(
             with: URL(string: result.urls.small),
             options: [
-                .processor(DownsamplingImageProcessor(size: size)),
                 .scaleFactor(UIScreen.main.scale),
                 .cacheOriginalImage
             ]

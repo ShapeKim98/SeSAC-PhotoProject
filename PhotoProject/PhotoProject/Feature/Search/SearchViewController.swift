@@ -14,6 +14,8 @@ class SearchViewController: UIViewController {
     private let colorButtonHStack = UIStackView()
     private var colorButtons = [ColorButton]()
     private let sortButton = UIButton()
+    private let noticeLabel = UILabel()
+    private let activityIndicatorView = UIActivityIndicatorView(style: .large)
     private lazy var collectionView: UICollectionView = {
         return configureCollectionView()
     }()
@@ -24,11 +26,15 @@ class SearchViewController: UIViewController {
     private var sort = Sort.relevant {
         didSet { didSetSort() }
     }
-    private var search = SearchResponse.mock {
-        didSet { collectionView.reloadData() }
+    private var search: SearchResponse? {
+        didSet { didSetSearch() }
     }
     private var page = 1
     private var query = ""
+    private var isLoading = false {
+        didSet { didSetIsLoading() }
+    }
+    private var isPaging = false
     
     private let searchClient = SearchClient.shared
 
@@ -57,6 +63,10 @@ private extension SearchViewController {
         configureColorButtonScrollView()
         
         configureSortButton()
+        
+        configureNoticeLabel()
+        
+        configureActivityIndicator()
     }
     
     func configureLayout() {
@@ -89,6 +99,14 @@ private extension SearchViewController {
             make.top.equalTo(colorButtonScrollView.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        noticeLabel.snp.makeConstraints { make in
+            make.center.equalTo(collectionView)
+        }
+        
+        activityIndicatorView.snp.makeConstraints { make in
+            make.center.equalTo(collectionView)
         }
     }
     
@@ -181,6 +199,17 @@ private extension SearchViewController {
         
         return collectionView
     }
+    
+    func configureNoticeLabel() {
+        noticeLabel.text = "사진을 검색해보세요."
+        noticeLabel.font = .systemFont(ofSize: 16, weight: .bold)
+        view.addSubview(noticeLabel)
+    }
+    
+    func configureActivityIndicator() {
+        activityIndicatorView.isHidden = true
+        collectionView.addSubview(activityIndicatorView)
+    }
 }
 
 // MARK: Functions
@@ -209,6 +238,8 @@ private extension SearchViewController {
     func fetchSearch() {
         Task { [weak self] in
             guard let `self` else { return }
+            self.isLoading = true
+            defer { self.isLoading = false }
             
             let request = SearchRequest(
                 query: self.query,
@@ -224,6 +255,36 @@ private extension SearchViewController {
             }
         }
     }
+    
+    func paginationSearch() {
+        guard
+            !isPaging,
+            let search,
+            search.results.count < search.total,
+            page < search.totalPages
+        else { return }
+        
+        Task { [weak self] in
+            guard let `self` else { return }
+            self.isPaging = true
+            defer { isPaging = false }
+            self.page += 1
+            
+            let request = SearchRequest(
+                query: self.query,
+                page: self.page,
+                perPage: 20,
+                orderBy: self.sort.rawValue,
+                color: self.colorFilter?.rawValue
+            )
+            
+            do {
+                self.search?.results += try await searchClient.fetchSearch(request).results
+            } catch {
+                print(error)
+            }
+        }
+    }
 }
 
 // MARK: Data Bindings
@@ -234,6 +295,13 @@ private extension SearchViewController {
                 button.isSelected(button.filter == colorFilter)
             }
         }
+        
+        guard !(search?.results.isEmpty ?? true) else { return }
+        collectionView.scrollToItem(
+            at: IndexPath(item: 0, section: 0),
+            at: .top,
+            animated: true
+        )
     }
     
     func didSetSort() {
@@ -244,6 +312,31 @@ private extension SearchViewController {
                 .font: UIFont.systemFont(ofSize: 14, weight: .bold)
             ])
         )
+        guard !(search?.results.isEmpty ?? true) else { return }
+        collectionView.scrollToItem(
+            at: IndexPath(item: 0, section: 0),
+            at: .top,
+            animated: true
+        )
+    }
+    
+    func didSetSearch() {
+        if search?.results.isEmpty ?? true {
+            noticeLabel.text = "검색 결과가 없어요."
+            noticeLabel.isHidden = false
+        } else {
+            noticeLabel.isHidden = true
+        }
+        collectionView.reloadData()
+    }
+    
+    func didSetIsLoading() {
+        activityIndicatorView.isHidden = !isLoading
+        if isLoading {
+            activityIndicatorView.startAnimating()
+        } else {
+            activityIndicatorView.stopAnimating()
+        }
     }
 }
 
@@ -256,6 +349,8 @@ extension SearchViewController: UISearchResultsUpdating,
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         query = searchBar.text ?? ""
         view.endEditing(true)
+        colorFilter = nil
+        sort = .relevant
         
         fetchSearch()
     }
@@ -265,7 +360,7 @@ extension SearchViewController: UICollectionViewDelegate,
                                 UICollectionViewDataSource,
                                 UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return search.results.count
+        return search?.results.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -273,17 +368,27 @@ extension SearchViewController: UICollectionViewDelegate,
             withReuseIdentifier: .searchCollectionCell,
             for: indexPath
         ) as? SearchCollectionViewCell
-        guard let cell else { return UICollectionViewCell() }
-        
-        let result = search.results[indexPath.item]
+        guard
+            let cell,
+            let result = search?.results[indexPath.item]
+        else { return UICollectionViewCell() }
         
         cell.cellForItemAt(result)
         cell.layoutIfNeeded()
+        
+        if search?.results.count == indexPath.item + 1 {
+            paginationSearch()
+        }
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        
+        for indexPath in indexPaths {
+            guard
+                search?.results.count == indexPath.item + 2
+            else { continue }
+            paginationSearch()
+        }
     }
 }
 

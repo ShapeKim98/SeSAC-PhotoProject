@@ -193,12 +193,12 @@ private extension TopicViewController {
             guard let `self` else { return }
             self.isLoading = true
             defer { self.isLoading = false }
-//            guard (CFAbsoluteTimeGetCurrent() - lastTime) > 60 else {
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                    sender.endRefreshing()
-//                }
-//                return
-//            }
+            guard (CFAbsoluteTimeGetCurrent() - lastTime) > 60 else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    sender.endRefreshing()
+                }
+                return
+            }
             self.topicTypes.shuffle()
             
             async let goldenHour = topicClient.fetchTopics(TopicRequest(

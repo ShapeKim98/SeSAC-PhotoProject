@@ -12,7 +12,7 @@ struct Historical: Decodable {
 }
 
 extension Historical {
-    struct Value: Decodable {
+    struct Value: Decodable, Equatable {
         let date: String
         let value: Int
     }

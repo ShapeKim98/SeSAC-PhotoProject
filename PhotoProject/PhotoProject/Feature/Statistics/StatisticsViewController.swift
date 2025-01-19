@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 import Kingfisher
 import SnapKit
@@ -22,6 +23,7 @@ class StatisticsViewController: UIViewController {
     private let scrollView = UIScrollView()
     private var infoDetailLabels = [InfoDetailLabel]()
     private let activityIndicatorView = UIActivityIndicatorView(style: .large)
+    private var chartController = UIHostingController(rootView: StatisticChartView())
     
     private let photo: PhotoCellProtocol
     private var statistics: StatisticsResponse? {
@@ -55,6 +57,7 @@ private extension StatisticsViewController {
     func configureUI() {
         view.backgroundColor = .systemBackground
         
+        scrollView.isScrollEnabled = true
         view.addSubview(scrollView)
         
         scrollView.addSubview(contentView)
@@ -73,7 +76,13 @@ private extension StatisticsViewController {
         
         configureInfoDetailLabel()
         
+        configureChartLabel()
+        
         configureActivityIndicator()
+        
+        addChild(chartController)
+        contentView.addSubview(chartController.view)
+        chartController.didMove(toParent: self)
     }
     
     func configureLayout() {
@@ -130,6 +139,20 @@ private extension StatisticsViewController {
         activityIndicatorView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
+        
+        chartLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(16)
+            make.top.equalTo(infoVStack.snp.bottom).offset(16)
+            make.width.equalTo(100)
+        }
+        
+        chartController.view.snp.makeConstraints { make in
+            make.leading.equalTo(chartLabel.snp.trailing)
+            make.trailing.equalToSuperview().inset(16)
+            make.top.equalTo(infoVStack.snp.bottom).offset(16)
+            make.height.equalTo(300)
+            make.bottom.equalToSuperview()
+        }
     }
     
     func configureProfileImageView() {
@@ -175,6 +198,12 @@ private extension StatisticsViewController {
         contentView.addSubview(infoLabel)
     }
     
+    func configureChartLabel() {
+        chartLabel.text = "차트"
+        chartLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        contentView.addSubview(chartLabel)
+    }
+    
     func configureInfoVStack() {
         infoVStack.axis = .vertical
         infoVStack.spacing = 12
@@ -211,18 +240,16 @@ private extension StatisticsViewController {
 // MARK: Data Bindings
 private extension StatisticsViewController {
     func didSetStatistics() {
-        let views = statistics?.views.total.formatted() ?? "0"
-        infoDetailLabels[1].setValue(value: views)
-        let downloads = statistics?.downloads.total.formatted() ?? "0"
-        infoDetailLabels[2].setValue(value: downloads)
+        guard let statistics else { return }
         
-        if statistics == nil {
-            activityIndicatorView.isHidden = false
-            activityIndicatorView.startAnimating()
-        } else {
-            activityIndicatorView.isHidden = true
-            activityIndicatorView.stopAnimating()
-        }
+        let views = statistics.views.total.formatted()
+        infoDetailLabels[1].setValue(value: views)
+        let downloads = statistics.downloads.total.formatted()
+        infoDetailLabels[2].setValue(value: downloads)
+        chartController.rootView = StatisticChartView(statistics: statistics)
+        
+        activityIndicatorView.isHidden = true
+        activityIndicatorView.stopAnimating()
     }
 }
 

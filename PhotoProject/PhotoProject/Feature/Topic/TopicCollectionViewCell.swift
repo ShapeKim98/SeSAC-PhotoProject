@@ -7,6 +7,8 @@
 
 import UIKit
 
+import SnapKit
+
 class TopicCollectionViewCell: UICollectionViewCell {
     private let photoCell: PhotoViewCell
     
@@ -37,4 +39,8 @@ class TopicCollectionViewCell: UICollectionViewCell {
     func cancelImageDownload() {
         photoCell.cancelImageDownload()
     }
+}
+
+extension String {
+    static let topicCollectionCell = "TopicCollectionViewCell"
 }

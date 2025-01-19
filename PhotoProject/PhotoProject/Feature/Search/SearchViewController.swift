@@ -390,6 +390,16 @@ extension SearchViewController: UICollectionViewDelegate,
             paginationSearch()
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let search else { return }
+        let result = search.results[indexPath.item]
+        navigationController?.pushViewController(
+            StatisticsViewController(photo: result),
+            animated: true
+        )
+        collectionView.deselectItem(at: indexPath, animated: true)
+    }
 }
 
 extension SearchViewController {

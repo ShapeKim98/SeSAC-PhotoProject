@@ -57,6 +57,8 @@ private extension StatisticsViewController {
     func configureUI() {
         view.backgroundColor = .systemBackground
         
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
         scrollView.isScrollEnabled = true
         view.addSubview(scrollView)
         
@@ -158,7 +160,7 @@ private extension StatisticsViewController {
     func configureProfileImageView() {
         let url = URL(string: photo.user.profileImage.medium)
         profileImageView.kf.setImage(with: url)
-        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.contentMode = .scaleAspectFit
         profileImageView.layer.cornerRadius = 16
         profileImageView.clipsToBounds = true
         contentView.addSubview(profileImageView)
@@ -175,7 +177,7 @@ private extension StatisticsViewController {
                 .cacheOriginalImage
             ]
         )
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         contentView.addSubview(imageView)
     }
     

@@ -39,6 +39,12 @@ class TopicViewController: UIViewController {
         
         fetchTopics()
     }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
 }
 
 // MARK: Configure View
@@ -245,6 +251,15 @@ extension TopicViewController: UICollectionViewDelegate,
         cell.layoutIfNeeded()
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let topic = topics[collectionView.tag][indexPath.item]
+        navigationController?.pushViewController(
+            StatisticsViewController(photo: topic),
+            animated: true
+        )
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
 }
 

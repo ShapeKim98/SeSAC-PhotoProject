@@ -1,5 +1,5 @@
 //
-//  SearchCollectionViewCell.swift
+//  TopicCollectionViewCell.swift
 //  PhotoProject
 //
 //  Created by 김도형 on 1/19/25.
@@ -7,14 +7,11 @@
 
 import UIKit
 
-import Kingfisher
-import SnapKit
-
-class SearchCollectionViewCell: UICollectionViewCell {
+class TopicCollectionViewCell: UICollectionViewCell {
     private let photoCell: PhotoViewCell
     
     override init(frame: CGRect) {
-        self.photoCell = PhotoViewCell(frame: frame, isTopic: false)
+        self.photoCell = PhotoViewCell(frame: frame, isTopic: true)
         super.init(frame: frame)
         backgroundColor = .clear
         
@@ -33,15 +30,11 @@ class SearchCollectionViewCell: UICollectionViewCell {
         photoCell.roundLikesLabel()
     }
     
-    func cellForItemAt(_ result: SearchResponse.Result) {
+    func cellForItemAt(_ result: TopicResponse) {
         photoCell.cellForItemAt(result)
     }
     
     func cancelImageDownload() {
         photoCell.cancelImageDownload()
     }
-}
-
-extension String {
-    static let searchCollectionCell = "SearchCollectionViewCell"
 }

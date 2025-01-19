@@ -19,7 +19,7 @@ struct SearchResponse: Decodable {
 }
 
 extension SearchResponse {
-    struct Result: Decodable {
+    struct Result: Decodable, PhotoCellProtocol {
         let id: String
         let createdAt: String
         let width: CGFloat

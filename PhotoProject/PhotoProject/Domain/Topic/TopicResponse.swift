@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TopicResponse: Decodable {
+struct TopicResponse: Decodable, PhotoCellProtocol {
     let id: String
     let createdAt: String
     let width: CGFloat

@@ -39,6 +39,12 @@ class TopicViewController: UIViewController {
         
         fetchTopics()
     }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        configureNavigationBar()
+    }
 }
 
 // MARK: Configure View
@@ -181,7 +187,14 @@ private extension TopicViewController {
                 ]
                 lastTime = CFAbsoluteTimeGetCurrent()
             } catch {
-                print(error)
+                if let baseError = error as? BaseError {
+                    presentAlert(
+                        title: "오류",
+                        message: baseError.errors.joined(separator: "\n")
+                    )
+                } else {
+                    print(error)
+                }
             }
         }
     }
@@ -222,7 +235,14 @@ private extension TopicViewController {
                     sender.endRefreshing()
                 }
             } catch {
-                print(error)
+                if let baseError = error as? BaseError {
+                    presentAlert(
+                        title: "오류",
+                        message: baseError.errors.joined(separator: "\n")
+                    )
+                } else {
+                    print(error)
+                }
             }
         }
     }
@@ -245,6 +265,15 @@ extension TopicViewController: UICollectionViewDelegate,
         cell.layoutIfNeeded()
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let topic = topics[collectionView.tag][indexPath.item]
+        navigationController?.pushViewController(
+            StatisticsViewController(photo: topic),
+            animated: true
+        )
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
 }
 

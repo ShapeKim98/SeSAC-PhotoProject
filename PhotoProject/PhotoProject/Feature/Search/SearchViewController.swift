@@ -45,6 +45,12 @@ class SearchViewController: UIViewController {
         
         configureLayout()
     }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        configureNavigationBar()
+    }
 }
 
 // MARK: Configure View
@@ -251,7 +257,14 @@ private extension SearchViewController {
             do {
                 self.search = try await searchClient.fetchSearch(request)
             } catch {
-                print(error)
+                if let baseError = error as? BaseError {
+                    presentAlert(
+                        title: "오류",
+                        message: baseError.errors.joined(separator: "\n")
+                    )
+                } else {
+                    print(error)
+                }
             }
         }
     }
@@ -281,7 +294,14 @@ private extension SearchViewController {
             do {
                 self.search?.results += try await searchClient.fetchSearch(request).results
             } catch {
-                print(error)
+                if let baseError = error as? BaseError {
+                    presentAlert(
+                        title: "오류",
+                        message: baseError.errors.joined(separator: "\n")
+                    )
+                } else {
+                    print(error)
+                }
             }
         }
     }
@@ -389,6 +409,16 @@ extension SearchViewController: UICollectionViewDelegate,
             else { continue }
             paginationSearch()
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let search else { return }
+        let result = search.results[indexPath.item]
+        navigationController?.pushViewController(
+            StatisticsViewController(photo: result),
+            animated: true
+        )
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
 }
 

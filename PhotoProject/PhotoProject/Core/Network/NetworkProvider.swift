@@ -29,13 +29,22 @@ struct NetworkProvider<E: EndPoint>: Sendable {
         return try await withCheckedThrowingContinuation { continuation in
             AF
                 .request(url, method: endPoint.method, headers: header)
-                .validate(statusCode: 200..<300)
                 .responseDecodable(of: T.self) { response in
                     switch response.result {
                     case .success(let data):
-//                        dump(data)
                         continuation.resume(returning: data)
                     case .failure(let error):
+                        if let data = response.data {
+                            if let baseError = try? JSONDecoder().decode(BaseError.self, from: data) {
+                                continuation.resume(throwing: baseError)
+                                return
+                            }
+                            
+                            if let errorString = String(data: data, encoding: .utf8) {
+                                continuation.resume(throwing: BaseError(errors: [errorString]))
+                                return
+                            }
+                        }
                         continuation.resume(throwing: error)
                     }
                 }

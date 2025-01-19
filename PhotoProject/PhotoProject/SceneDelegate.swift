@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window?.windowScene = scene
         
-        let root = UINavigationController(rootViewController: SearchViewController())
+        let root = UINavigationController(rootViewController: TopicViewController())
         window?.rootViewController = root
         window?.makeKeyAndVisible()
     }

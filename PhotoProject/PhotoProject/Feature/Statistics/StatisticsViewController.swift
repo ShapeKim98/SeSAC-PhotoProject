@@ -259,7 +259,14 @@ private extension StatisticsViewController {
             do {
                 self.statistics = try await statisticsClient.fetchStatistics(photo.id)
             } catch {
-                print(error)
+                if let baseError = error as? BaseError {
+                    presentAlert(
+                        title: "오류",
+                        message: baseError.errors.joined(separator: "\n")
+                    )
+                } else {
+                    print(error)
+                }
             }
         }
     }

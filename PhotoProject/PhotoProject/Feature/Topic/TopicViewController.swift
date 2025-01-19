@@ -187,7 +187,14 @@ private extension TopicViewController {
                 ]
                 lastTime = CFAbsoluteTimeGetCurrent()
             } catch {
-                print(error)
+                if let baseError = error as? BaseError {
+                    presentAlert(
+                        title: "오류",
+                        message: baseError.errors.joined(separator: "\n")
+                    )
+                } else {
+                    print(error)
+                }
             }
         }
     }
@@ -228,7 +235,14 @@ private extension TopicViewController {
                     sender.endRefreshing()
                 }
             } catch {
-                print(error)
+                if let baseError = error as? BaseError {
+                    presentAlert(
+                        title: "오류",
+                        message: baseError.errors.joined(separator: "\n")
+                    )
+                } else {
+                    print(error)
+                }
             }
         }
     }

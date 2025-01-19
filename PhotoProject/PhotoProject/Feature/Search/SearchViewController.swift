@@ -251,7 +251,14 @@ private extension SearchViewController {
             do {
                 self.search = try await searchClient.fetchSearch(request)
             } catch {
-                print(error)
+                if let baseError = error as? BaseError {
+                    presentAlert(
+                        title: "오류",
+                        message: baseError.errors.joined(separator: "\n")
+                    )
+                } else {
+                    print(error)
+                }
             }
         }
     }
@@ -281,7 +288,14 @@ private extension SearchViewController {
             do {
                 self.search?.results += try await searchClient.fetchSearch(request).results
             } catch {
-                print(error)
+                if let baseError = error as? BaseError {
+                    presentAlert(
+                        title: "오류",
+                        message: baseError.errors.joined(separator: "\n")
+                    )
+                } else {
+                    print(error)
+                }
             }
         }
     }

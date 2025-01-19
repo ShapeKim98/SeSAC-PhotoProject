@@ -115,13 +115,8 @@ private extension StatisticsViewController {
         
         imageView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            if photo.width > photo.height {
-                make.height.equalTo(imageView.snp.width)
-                    .multipliedBy(photo.width / photo.height)
-            } else {
-                make.height.equalTo(imageView.snp.width)
-                    .multipliedBy(photo.height / photo.width)
-            }
+            make.height.equalTo(contentView.snp.width)
+                .multipliedBy(photo.height / photo.width)
             
             make.top.equalTo(profileImageView.snp.bottom).offset(16)
         }
@@ -216,7 +211,7 @@ private extension StatisticsViewController {
     func configureInfoDetailLabel() {
         let size = InfoDetailLabel(
             title: "크기",
-            value: "\(Int(photo.width)) x \(Int(photo.height))"
+            value: "\(Int(photo.height)) x \(Int(photo.width))"
         )
         infoDetailLabels.append(size)
         infoVStack.addArrangedSubview(size)

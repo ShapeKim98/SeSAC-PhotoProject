@@ -57,7 +57,7 @@ private extension StatisticsViewController {
     func configureUI() {
         view.backgroundColor = .systemBackground
         
-        navigationController?.navigationBar.prefersLargeTitles = false
+        configureNavigationBar()
         
         scrollView.isScrollEnabled = true
         view.addSubview(scrollView)
@@ -150,6 +150,12 @@ private extension StatisticsViewController {
             make.height.equalTo(300)
             make.bottom.equalToSuperview()
         }
+    }
+    
+    func configureNavigationBar() {
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.tintColor = .label
+        navigationController?.navigationBar.topItem?.title = ""
     }
     
     func configureProfileImageView() {

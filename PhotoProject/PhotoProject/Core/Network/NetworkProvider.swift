@@ -29,7 +29,6 @@ struct NetworkProvider<E: EndPoint>: Sendable {
         return try await withCheckedThrowingContinuation { continuation in
             AF
                 .request(url, method: endPoint.method, headers: header)
-                .responseString { print($0) }
                 .responseDecodable(of: T.self) { response in
                     switch response.result {
                     case .success(let data):

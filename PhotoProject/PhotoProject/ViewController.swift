@@ -38,12 +38,12 @@ private extension ViewController {
     }
     
     func configureTabBarAppearance() {
-        let appearence = UITabBarAppearance()
-        appearence.configureWithOpaqueBackground()
-        appearence.backgroundColor = .systemBackground
-        tabBar.standardAppearance = appearence
-        tabBar.scrollEdgeAppearance = appearence
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .systemBackground
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
         tabBar.tintColor = .black
-        UITabBar.appearance().scrollEdgeAppearance = appearence
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 }

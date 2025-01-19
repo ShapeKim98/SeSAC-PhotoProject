@@ -43,7 +43,7 @@ class TopicViewController: UIViewController {
     override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
         
-        navigationController?.navigationBar.prefersLargeTitles = true
+        configureNavigationBar()
     }
 }
 

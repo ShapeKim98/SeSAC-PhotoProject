@@ -45,6 +45,12 @@ class SearchViewController: UIViewController {
         
         configureLayout()
     }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        configureNavigationBar()
+    }
 }
 
 // MARK: Configure View

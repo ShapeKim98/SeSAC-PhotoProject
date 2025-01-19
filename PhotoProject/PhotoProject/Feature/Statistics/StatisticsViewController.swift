@@ -20,9 +20,15 @@ class StatisticsViewController: UIViewController {
     private let infoVStack = UIStackView()
     private let contentView = UIView()
     private let scrollView = UIScrollView()
+    private var infoDetailLabels = [InfoDetailLabel]()
+    private let activityIndicatorView = UIActivityIndicatorView(style: .large)
     
     private let photo: PhotoCellProtocol
-    private let statistics: StatisticsResponse = .mock
+    private var statistics: StatisticsResponse? {
+        didSet { didSetStatistics() }
+    }
+    
+    private let statisticsClient = StatisticsClient.shared
     
     init(photo: PhotoCellProtocol = [TopicResponse].mock[0]) {
         self.photo = photo
@@ -39,6 +45,8 @@ class StatisticsViewController: UIViewController {
         configureUI()
         
         configureLayout()
+        
+        fetchStatistics()
     }
 }
 
@@ -64,6 +72,8 @@ private extension StatisticsViewController {
         configureInfoVStack()
         
         configureInfoDetailLabel()
+        
+        configureActivityIndicator()
     }
     
     func configureLayout() {
@@ -115,6 +125,10 @@ private extension StatisticsViewController {
             make.leading.equalTo(infoLabel.snp.trailing)
             make.trailing.equalToSuperview().inset(16)
             make.top.equalTo(imageView.snp.bottom).offset(16)
+        }
+        
+        activityIndicatorView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
     }
     
@@ -169,18 +183,61 @@ private extension StatisticsViewController {
     }
     
     func configureInfoDetailLabel() {
-        infoVStack.addArrangedSubview(InfoDetailLabel(
+        let size = InfoDetailLabel(
             title: "크기",
             value: "\(Int(photo.width)) x \(Int(photo.height))"
-        ))
-        infoVStack.addArrangedSubview(InfoDetailLabel(
+        )
+        infoDetailLabels.append(size)
+        infoVStack.addArrangedSubview(size)
+        let views = InfoDetailLabel(
             title: "조회수",
-            value: statistics.views.total.formatted()
-        ))
-        infoVStack.addArrangedSubview(InfoDetailLabel(
+            value: statistics?.views.total.formatted() ?? "0"
+        )
+        infoDetailLabels.append(views)
+        infoVStack.addArrangedSubview(views)
+        let downloads = InfoDetailLabel(
             title: "다운로드",
-            value: statistics.downloads.total.formatted()
-        ))
+            value: statistics?.downloads.total.formatted() ?? "0"
+        )
+        infoDetailLabels.append(downloads)
+        infoVStack.addArrangedSubview(downloads)
+    }
+    
+    func configureActivityIndicator() {
+        view.addSubview(activityIndicatorView)
+    }
+}
+
+// MARK: Data Bindings
+private extension StatisticsViewController {
+    func didSetStatistics() {
+        let views = statistics?.views.total.formatted() ?? "0"
+        infoDetailLabels[1].setValue(value: views)
+        let downloads = statistics?.downloads.total.formatted() ?? "0"
+        infoDetailLabels[2].setValue(value: downloads)
+        
+        if statistics == nil {
+            activityIndicatorView.isHidden = false
+            activityIndicatorView.startAnimating()
+        } else {
+            activityIndicatorView.isHidden = true
+            activityIndicatorView.stopAnimating()
+        }
+    }
+}
+
+// MARK: Functions
+private extension StatisticsViewController {
+    func fetchStatistics() {
+        Task { [weak self] in
+            guard let `self` else { return }
+            
+            do {
+                self.statistics = try await statisticsClient.fetchStatistics(photo.id)
+            } catch {
+                print(error)
+            }
+        }
     }
 }
 
@@ -199,6 +256,10 @@ private extension StatisticsViewController {
         
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+        
+        func setValue(value: String) {
+            valueLabel.text = value
         }
         
         private func configureUI(title: String, value: String) {

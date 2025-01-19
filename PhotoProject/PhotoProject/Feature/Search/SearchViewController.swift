@@ -21,8 +21,16 @@ class SearchViewController: UIViewController {
     private var colorFilter: ColorFilter? {
         didSet { didSetColorFilter() }
     }
-    private var sort = Sort.relevant
-    private var search = SearchResponse.mock
+    private var sort = Sort.relevant {
+        didSet { didSetSort() }
+    }
+    private var search = SearchResponse.mock {
+        didSet { collectionView.reloadData() }
+    }
+    private var page = 1
+    private var query = ""
+    
+    private let searchClient = SearchClient.shared
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -143,6 +151,11 @@ private extension SearchViewController {
         configuration.background.strokeWidth = 1
         configuration.image = UIImage(systemName: "arrow.up.arrow.down")
         sortButton.configuration = configuration
+        sortButton.addTarget(
+            self,
+            action: #selector(sortButtonTouchUpInside),
+            for: .touchUpInside
+        )
         view.addSubview(sortButton)
     }
     
@@ -174,7 +187,42 @@ private extension SearchViewController {
 private extension SearchViewController {
     @objc
     func colorButtonTouchUpInside(_ sender: ColorButton) {
-        colorFilter = sender.filter
+        if colorFilter == sender.filter {
+            colorFilter = nil
+        } else {
+            colorFilter = sender.filter
+        }
+        
+        fetchSearch()
+    }
+    
+    @objc
+    func sortButtonTouchUpInside(_ sender: UIButton) {
+        switch sort {
+        case .relevant: sort = .latest
+        case .latest: sort = .relevant
+        }
+        
+        fetchSearch()
+    }
+    
+    func fetchSearch() {
+        Task { [weak self] in
+            guard let `self` else { return }
+            
+            let request = SearchRequest(
+                query: self.query,
+                page: self.page,
+                perPage: 20,
+                orderBy: self.sort.rawValue,
+                color: self.colorFilter?.rawValue
+            )
+            do {
+                self.search = try await searchClient.fetchSearch(request)
+            } catch {
+                print(error)
+            }
+        }
     }
 }
 
@@ -187,12 +235,29 @@ private extension SearchViewController {
             }
         }
     }
+    
+    func didSetSort() {
+        sortButton.configuration?.attributedTitle = AttributedString(
+            sort.title,
+            attributes: AttributeContainer([
+                .foregroundColor: UIColor.label,
+                .font: UIFont.systemFont(ofSize: 14, weight: .bold)
+            ])
+        )
+    }
 }
 
 extension SearchViewController: UISearchResultsUpdating,
                                     UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        query = searchBar.text ?? ""
+        view.endEditing(true)
+        
+        fetchSearch()
     }
 }
 

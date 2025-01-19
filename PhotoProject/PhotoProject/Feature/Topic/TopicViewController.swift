@@ -24,7 +24,7 @@ class TopicViewController: UIViewController {
     }
     
     private var topicTypes = TopicType.allCases.shuffled() {
-        didSet { }
+        didSet { didSetTopicTypes() }
     }
     
     private let topicClient = TopicClient.shared
@@ -148,8 +148,8 @@ private extension TopicViewController {
     }
     
     func didSetTopicTypes() {
-        for (index, type) in topicTypes.enumerated() {
-            let container = topicCollectionViews[index]
+        for (index, container) in topicCollectionViews.enumerated() {
+            let type = topicTypes[index]
             container.setTitle(type.title)
         }
     }
@@ -193,12 +193,12 @@ private extension TopicViewController {
             guard let `self` else { return }
             self.isLoading = true
             defer { self.isLoading = false }
-            guard (CFAbsoluteTimeGetCurrent() - lastTime) > 60 else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    sender.endRefreshing()
-                }
-                return
-            }
+//            guard (CFAbsoluteTimeGetCurrent() - lastTime) > 60 else {
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                    sender.endRefreshing()
+//                }
+//                return
+//            }
             self.topicTypes.shuffle()
             
             async let goldenHour = topicClient.fetchTopics(TopicRequest(

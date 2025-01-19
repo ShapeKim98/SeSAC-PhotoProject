@@ -15,8 +15,6 @@ actor SearchClient {
     private init() { }
     
     func fetchSearch(_ model: SearchRequest) async throws -> SearchResponse {
-        try await provider.request(
-            SearchEndPoint.fetchSearch(model)
-        )
+        try await provider.request(.fetchSearch(model))
     }
 }

@@ -13,8 +13,22 @@ class TopicViewController: UIViewController {
     private var topicCollectionViews = [TopicCollectionViewContainer]()
     private let vstack = UIStackView()
     private let scrollView = UIScrollView()
-    private let topics: [[TopicResponse]] = [.mock, .mock, .mock]
     private let contentView = UIView()
+    private let activityIndicatorView = UIActivityIndicatorView(style: .large)
+    
+    private var topics: [[TopicResponse]] = [[], [], []] {
+        didSet { didSetTopics() }
+    }
+    private var isLoading = false {
+        didSet { didSetIsLoading() }
+    }
+    
+    private var topicTypes = TopicType.allCases.shuffled() {
+        didSet { }
+    }
+    
+    private let topicClient = TopicClient.shared
+    private var lastTime = CFAbsoluteTimeGetCurrent()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +36,8 @@ class TopicViewController: UIViewController {
         configureUI()
         
         configureLayout()
+        
+        fetchTopics()
     }
 }
 
@@ -39,6 +55,8 @@ private extension TopicViewController {
         configureVStack()
         
         configureCollectionViews()
+        
+        configureActivityIndicator()
     }
     
     func configureLayout() {
@@ -60,6 +78,10 @@ private extension TopicViewController {
                 make.horizontalEdges.equalToSuperview()
             }
         }
+        
+        activityIndicatorView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
     
     func configureNavigationBar() {
@@ -69,6 +91,12 @@ private extension TopicViewController {
     
     func configureScrollView() {
         scrollView.isScrollEnabled = true
+        scrollView.refreshControl = UIRefreshControl()
+        scrollView.refreshControl?.addTarget(
+            self,
+            action: #selector(refreshControlValueChanged),
+            for: .valueChanged
+        )
         view.addSubview(scrollView)
     }
     
@@ -81,11 +109,13 @@ private extension TopicViewController {
     }
     
     func configureCollectionViews() {
-        for type in TopicType.allCases {
+        for (index, topic) in topics.enumerated() {
+            let type = topicTypes[index]
+            
             let container = TopicCollectionViewContainer(
                 title: type.title,
-                topic: topics[type.tag],
-                tag: type.tag
+                topic: topic,
+                tag: index
             )
             container.collectionView.delegate = self
             container.collectionView.dataSource = self
@@ -93,9 +123,113 @@ private extension TopicViewController {
             vstack.addArrangedSubview(container)
         }
     }
+    
+    func configureActivityIndicator() {
+        activityIndicatorView.isHidden = true
+        view.addSubview(activityIndicatorView)
+    }
 }
+
+// MARK: Data Bindings
+private extension TopicViewController {
+    func didSetTopics() {
+        for container in topicCollectionViews {
+            container.collectionView.reloadData()
+        }
+    }
+    
+    func didSetIsLoading() {
+        activityIndicatorView.isHidden = !isLoading
+        if isLoading {
+            activityIndicatorView.startAnimating()
+        } else {
+            activityIndicatorView.stopAnimating()
+        }
+    }
+    
+    func didSetTopicTypes() {
+        for (index, type) in topicTypes.enumerated() {
+            let container = topicCollectionViews[index]
+            container.setTitle(type.title)
+        }
+    }
+}
+
+// MARK: Functions
+private extension TopicViewController {
+    func fetchTopics() {
+        Task { [weak self] in
+            guard let `self` else { return }
+            self.isLoading = true
+            defer { self.isLoading = false }
+            
+            async let goldenHour = topicClient.fetchTopics(TopicRequest(
+                topic: topicTypes[0].rawValue
+            ))
+            async let businessWork = topicClient.fetchTopics(TopicRequest(
+                topic: topicTypes[1].rawValue
+            ))
+            async let architectureInterior = topicClient.fetchTopics(TopicRequest(
+                topic: topicTypes[2].rawValue
+            ))
+            
+            do {
+                self.topics = try await [
+                    goldenHour,
+                    businessWork,
+                    architectureInterior
+                ]
+                lastTime = CFAbsoluteTimeGetCurrent()
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    @objc
+    func refreshControlValueChanged(_ sender: UIRefreshControl) {
+        guard !isLoading else { return }
+        Task { [weak self] in
+            guard let `self` else { return }
+            self.isLoading = true
+            defer { self.isLoading = false }
+            guard (CFAbsoluteTimeGetCurrent() - lastTime) > 60 else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    sender.endRefreshing()
+                }
+                return
+            }
+            self.topicTypes.shuffle()
+            
+            async let goldenHour = topicClient.fetchTopics(TopicRequest(
+                topic: topicTypes[0].rawValue
+            ))
+            async let businessWork = topicClient.fetchTopics(TopicRequest(
+                topic: topicTypes[1].rawValue
+            ))
+            async let architectureInterior = topicClient.fetchTopics(TopicRequest(
+                topic: topicTypes[2].rawValue
+            ))
+            
+            do {
+                self.topics = try await [
+                    goldenHour,
+                    businessWork,
+                    architectureInterior
+                ]
+                lastTime = CFAbsoluteTimeGetCurrent()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    sender.endRefreshing()
+                }
+            } catch {
+                print(error)
+            }
+        }
+    }
+}
+
 extension TopicViewController: UICollectionViewDelegate,
-                                        UICollectionViewDataSource {
+                               UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return topics[collectionView.tag].count
     }
@@ -117,22 +251,40 @@ extension TopicViewController: UICollectionViewDelegate,
 extension TopicViewController {
     enum TopicType: String, CaseIterable {
         case goldenHour = "golden-hour"
-        case businessWork = "buisimess-work"
+        case businessWork = "business-work"
         case architectureInterior = "architecture-interior"
+        case wallpapers = "wallpapers"
+        case nature = "nature"
+        case _3dRenders = "3d-renders"
+        case travel = "travel"
+        case texturesPatterns = "textures-patterns"
+        case streetPhotography = "street-photography"
+        case film = "film"
+        case archival = "archival"
+        case experimental = "experimental"
+        case animals = "animals"
+        case fashionBeauty = "fashion-beauty"
+        case people = "people"
+        case foodDrink = "food-drink"
         
         var title: String {
             switch self {
             case .goldenHour: return "골든 아워"
             case .businessWork: return "비지니스 및 업무"
             case .architectureInterior: return "건축 및 인테리어"
-            }
-        }
-        
-        var tag: Int {
-            switch self {
-            case .goldenHour: return 0
-            case .businessWork: return 1
-            case .architectureInterior: return 2
+            case .wallpapers: return "배경 화면"
+            case .nature: return "자연"
+            case ._3dRenders: return "3D 렌더링"
+            case .travel: return "여행하다"
+            case .texturesPatterns: return "텍스쳐 및 패턴"
+            case .streetPhotography: return "거리 사진"
+            case .film: return "필름"
+            case .archival: return "기록의"
+            case .experimental: return "실험적인"
+            case .animals: return "동물"
+            case .fashionBeauty: return "패션 및 뷰티"
+            case .people: return "사람"
+            case .foodDrink: return "식음료"
             }
         }
     }

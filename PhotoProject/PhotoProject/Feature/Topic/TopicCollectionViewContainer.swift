@@ -15,7 +15,7 @@ class TopicCollectionViewContainer: UIView {
         configureCollectionView()
     }()
     
-    private let title: String
+    private var title: String
     private let topic: [TopicResponse]
     
     init(title: String, topic: [TopicResponse] = .mock, tag: Int) {
@@ -31,6 +31,11 @@ class TopicCollectionViewContainer: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setTitle(_ title: String) {
+        self.titleLabel.text = title
+        self.title = title
     }
 }
 

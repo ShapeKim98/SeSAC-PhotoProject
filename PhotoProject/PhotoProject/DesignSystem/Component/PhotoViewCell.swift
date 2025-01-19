@@ -27,17 +27,13 @@ class PhotoViewCell: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+fatalError("init(coder:) has not been implemented")
     }
     
     func cellForItemAt<C: PhotoCellProtocol>(_ result: C) {
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(
-            with: URL(string: result.urls.small),
-            options: [
-                .scaleFactor(UIScreen.main.scale),
-                .cacheOriginalImage
-            ]
+            with: URL(string: result.urls.small)
         )
         
         likesLabel.text = result.likes.formatted()

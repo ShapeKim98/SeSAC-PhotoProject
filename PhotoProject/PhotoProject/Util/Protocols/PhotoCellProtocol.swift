@@ -8,6 +8,11 @@
 import Foundation
 
 protocol PhotoCellProtocol {
+    var id: String { get }
     var urls: URLs { get }
     var likes: Int { get}
+    var user: User { get }
+    var width: CGFloat { get }
+    var height: CGFloat { get }
+    var createdAt: String { get }
 }

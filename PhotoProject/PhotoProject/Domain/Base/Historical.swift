@@ -1,0 +1,19 @@
+//
+//  Value.swift
+//  PhotoProject
+//
+//  Created by 김도형 on 1/19/25.
+//
+
+import Foundation
+
+struct Historical: Decodable {
+    let values: [Value]
+}
+
+extension Historical {
+    struct Value: Decodable {
+        let date: String
+        let value: Int
+    }
+}

@@ -14,7 +14,10 @@ actor SearchClient {
     
     private init() { }
     
-    func fetchSearch(_ model: SearchRequest) async throws -> SearchResponse {
-        try await provider.request(.fetchSearch(model))
+    func fetchSearch(
+        _ model: SearchRequest,
+        completion: @escaping (Result<SearchResponse, Error>) -> Void
+    )  {
+        provider.request(.fetchSearch(model), completion: completion)
     }
 }

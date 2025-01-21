@@ -7,7 +7,7 @@
 
 import Foundation
 
-actor TopicClient {
+class TopicClient {
     static let shared = TopicClient()
     
     private let provider = NetworkProvider<TopicEndPoint>()

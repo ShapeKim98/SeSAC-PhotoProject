@@ -163,87 +163,91 @@ private extension TopicViewController {
 
 // MARK: Functions
 private extension TopicViewController {
-    func fetchTopics() {
-        Task { [weak self] in
+    func fetchTopics(group: DispatchGroup = DispatchGroup()) {
+        self.isLoading = true
+        
+        group.enter()
+        topicClient.fetchTopics(TopicRequest(
+            topic: topicTypes[0].rawValue
+        )) { [weak self] result in
             guard let `self` else { return }
-            self.isLoading = true
-            defer { self.isLoading = false }
-            
-            async let goldenHour = topicClient.fetchTopics(TopicRequest(
-                topic: topicTypes[0].rawValue
-            ))
-            async let businessWork = topicClient.fetchTopics(TopicRequest(
-                topic: topicTypes[1].rawValue
-            ))
-            async let architectureInterior = topicClient.fetchTopics(TopicRequest(
-                topic: topicTypes[2].rawValue
-            ))
-            
-            do {
-                self.topics = try await [
-                    goldenHour,
-                    businessWork,
-                    architectureInterior
-                ]
-                lastTime = CFAbsoluteTimeGetCurrent()
-            } catch {
-                if let baseError = error as? BaseError {
-                    presentAlert(
-                        title: "오류",
-                        message: baseError.errors.joined(separator: "\n")
-                    )
-                } else {
-                    print(error)
-                }
+            switch result {
+            case .success(let success):
+                self.topics[0] = success
+            case .failure(let failure):
+                self.handleFailure(failure)
             }
+            group.leave()
+        }
+        
+        group.enter()
+        topicClient.fetchTopics(TopicRequest(
+            topic: topicTypes[1].rawValue
+        )) { [weak self] result in
+            guard let `self` else { return }
+            switch result {
+            case .success(let success):
+                self.topics[1] = success
+            case .failure(let failure):
+                self.handleFailure(failure)
+            }
+            group.leave()
+        }
+        
+        group.enter()
+        topicClient.fetchTopics(TopicRequest(
+            topic: topicTypes[2].rawValue
+        )) { [weak self] result in
+            guard let `self` else { return }
+            switch result {
+            case .success(let success):
+                self.topics[2] = success
+            case .failure(let failure):
+                self.handleFailure(failure)
+            }
+            group.leave()
+        }
+        
+        group.notify(queue: .main) { [weak self] in
+            guard let `self` else { return }
+            self.lastTime = CFAbsoluteTimeGetCurrent()
+            self.isLoading = false
         }
     }
     
     @objc
     func refreshControlValueChanged(_ sender: UIRefreshControl) {
         guard !isLoading else { return }
-        Task { [weak self] in
-            guard let `self` else { return }
+        guard (CFAbsoluteTimeGetCurrent() - lastTime) > 60 else {
             self.isLoading = true
-            defer { self.isLoading = false }
-            guard (CFAbsoluteTimeGetCurrent() - lastTime) > 60 else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    sender.endRefreshing()
-                }
-                return
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                sender.endRefreshing()
+                self.isLoading = false
             }
-            self.topicTypes.shuffle()
-            
-            async let goldenHour = topicClient.fetchTopics(TopicRequest(
-                topic: topicTypes[0].rawValue
-            ))
-            async let businessWork = topicClient.fetchTopics(TopicRequest(
-                topic: topicTypes[1].rawValue
-            ))
-            async let architectureInterior = topicClient.fetchTopics(TopicRequest(
-                topic: topicTypes[2].rawValue
-            ))
-            
-            do {
-                self.topics = try await [
-                    goldenHour,
-                    businessWork,
-                    architectureInterior
-                ]
-                lastTime = CFAbsoluteTimeGetCurrent()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    sender.endRefreshing()
-                }
-            } catch {
-                if let baseError = error as? BaseError {
-                    presentAlert(
-                        title: "오류",
-                        message: baseError.errors.joined(separator: "\n")
-                    )
-                } else {
-                    print(error)
-                }
+            return
+        }
+        self.topicTypes.shuffle()
+        
+        let group = DispatchGroup()
+        
+        fetchTopics(group: group)
+        
+        group.notify(queue: .main) { [weak self] in
+            guard let `self` else { return }
+            self.lastTime = CFAbsoluteTimeGetCurrent()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                sender.endRefreshing()
+                self.isLoading = false
             }
+        }
+    }
+    
+    func handleFailure(_ failure: Error) {
+        if let baseError = failure as? BaseError {
+            let message =  baseError.errors.joined(separator: "\n")
+            self.presentAlert(title: "오류", message: message)
+        } else {
+            print(failure)
         }
     }
 }

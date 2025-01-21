@@ -29,6 +29,7 @@ struct NetworkProvider<E: EndPoint>: Sendable {
             encoding: URLEncoding.queryString,
             headers: endPoint.headers
         )
+        .responseString { print($0) }
         .responseDecodable(of: T.self) { response in
             switch response.result {
             case .success(let data):

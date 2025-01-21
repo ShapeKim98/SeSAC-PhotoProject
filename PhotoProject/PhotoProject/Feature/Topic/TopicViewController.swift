@@ -166,46 +166,20 @@ private extension TopicViewController {
     func fetchTopics(group: DispatchGroup = DispatchGroup()) {
         self.isLoading = true
         
-        group.enter()
-        topicClient.fetchTopics(TopicRequest(
-            topic: topicTypes[0].rawValue
-        )) { [weak self] result in
-            guard let `self` else { return }
-            switch result {
-            case .success(let success):
-                self.topics[0] = success
-            case .failure(let failure):
-                self.handleFailure(failure)
+        for i in 0..<3 {
+            group.enter()
+            topicClient.fetchTopics(TopicRequest(
+                topic: topicTypes[i].rawValue
+            )) { [weak self] result in
+                guard let `self` else { return }
+                switch result {
+                case .success(let success):
+                    self.topics[i] = success
+                case .failure(let failure):
+                    self.handleFailure(failure)
+                }
+                group.leave()
             }
-            group.leave()
-        }
-        
-        group.enter()
-        topicClient.fetchTopics(TopicRequest(
-            topic: topicTypes[1].rawValue
-        )) { [weak self] result in
-            guard let `self` else { return }
-            switch result {
-            case .success(let success):
-                self.topics[1] = success
-            case .failure(let failure):
-                self.handleFailure(failure)
-            }
-            group.leave()
-        }
-        
-        group.enter()
-        topicClient.fetchTopics(TopicRequest(
-            topic: topicTypes[2].rawValue
-        )) { [weak self] result in
-            guard let `self` else { return }
-            switch result {
-            case .success(let success):
-                self.topics[2] = success
-            case .failure(let failure):
-                self.handleFailure(failure)
-            }
-            group.leave()
         }
         
         group.notify(queue: .main) { [weak self] in

@@ -243,7 +243,7 @@ private extension SearchViewController {
     
     func fetchSearch() {
         self.isLoading = true
-        
+        self.page = 1
         let request = SearchRequest(
             query: self.query,
             page: self.page,

@@ -11,7 +11,7 @@ import SwiftUI
 import Kingfisher
 import SnapKit
 
-class StatisticsViewController: UIViewController {
+final class StatisticsViewController: UIViewController {
     private let imageView = UIImageView()
     private let profileImageView = UIImageView()
     private let nameLabel = UILabel()
@@ -278,7 +278,7 @@ private extension StatisticsViewController {
 }
 
 private extension StatisticsViewController {
-    class InfoDetailLabel: UIView {
+    final class InfoDetailLabel: UIView {
         private let titleLabel = UILabel()
         private let valueLabel = UILabel()
         

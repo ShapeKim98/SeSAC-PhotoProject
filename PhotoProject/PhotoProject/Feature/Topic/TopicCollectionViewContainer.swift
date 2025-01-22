@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-class TopicCollectionViewContainer: UIView {
+final class TopicCollectionViewContainer: UIView {
     private let titleLabel = UILabel()
     lazy var collectionView: UICollectionView = {
         configureCollectionView()

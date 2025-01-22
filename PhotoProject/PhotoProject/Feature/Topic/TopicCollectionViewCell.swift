@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-class TopicCollectionViewCell: UICollectionViewCell {
+final class TopicCollectionViewCell: UICollectionViewCell {
     private let photoCell: PhotoViewCell
     
     override init(frame: CGRect) {

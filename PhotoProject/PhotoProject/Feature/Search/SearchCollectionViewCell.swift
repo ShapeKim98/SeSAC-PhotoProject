@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-class SearchCollectionViewCell: UICollectionViewCell {
+final class SearchCollectionViewCell: UICollectionViewCell {
     private let photoCell: PhotoViewCell
     
     override init(frame: CGRect) {

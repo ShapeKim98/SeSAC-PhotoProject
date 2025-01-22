@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-class TopicViewController: UIViewController {
+final class TopicViewController: UIViewController {
     private var topicCollectionViews = [TopicCollectionViewContainer]()
     private let vstack = UIStackView()
     private let scrollView = UIScrollView()

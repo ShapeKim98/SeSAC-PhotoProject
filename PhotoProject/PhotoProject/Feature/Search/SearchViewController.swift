@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-class SearchViewController: UIViewController {
+final class SearchViewController: UIViewController {
     private let colorButtonScrollView = UIScrollView()
     private let colorButtonHStack = UIStackView()
     private var colorButtons = [ColorButton]()
@@ -423,7 +423,7 @@ extension SearchViewController: UICollectionViewDelegate,
 }
 
 extension SearchViewController {
-    class ColorButton: UIButton {
+    final class ColorButton: UIButton {
         let filter: ColorFilter
         
         init(filter: ColorFilter) {

@@ -29,6 +29,7 @@ struct NetworkProvider<E: EndPoint>: Sendable {
             encoding: URLEncoding.queryString,
             headers: endPoint.headers
         )
+        .validate(statusCode: 200..<300)
         .responseDecodable(of: T.self) { response in
             switch response.result {
             case .success(let data):

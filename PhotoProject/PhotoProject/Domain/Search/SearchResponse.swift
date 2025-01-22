@@ -47,6 +47,7 @@ extension SearchResponse {
                 height: 3455,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1599572743109-61c820b3a79d?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1599572743109-61c820b3a79d?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 32,
@@ -64,6 +65,7 @@ extension SearchResponse {
                 height: 4000,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1659386509213-b39ca54f9d68?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1659386509213-b39ca54f9d68?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 2,
@@ -81,6 +83,7 @@ extension SearchResponse {
                 height: 4344,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1555025093-6929dde6e070?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1555025093-6929dde6e070?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 22,
@@ -98,6 +101,7 @@ extension SearchResponse {
                 height: 2925,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1572709373673-0d3f985b4e30?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1572709373673-0d3f985b4e30?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 41,
@@ -115,6 +119,7 @@ extension SearchResponse {
                 height: 3744,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1661866143866-7c4db1f004ac?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1661866143866-7c4db1f004ac?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 65,
@@ -132,6 +137,7 @@ extension SearchResponse {
                 height: 3852,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1716583731452-86cf639722f4?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1716583731452-86cf639722f4?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 12,
@@ -149,6 +155,7 @@ extension SearchResponse {
                 height: 3072,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1619118295137-e83b05cfa8a9?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1619118295137-e83b05cfa8a9?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 5,
@@ -166,6 +173,7 @@ extension SearchResponse {
                 height: 2685,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1559303970-6d3f3a61b1b4?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1559303970-6d3f3a61b1b4?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 142,
@@ -183,6 +191,7 @@ extension SearchResponse {
                 height: 2581,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1636558287093-4a1362f95da4?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1636558287093-4a1362f95da4?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 5,
@@ -200,6 +209,7 @@ extension SearchResponse {
                 height: 2581,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1636558287093-4a1362f95da4?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1636558287093-4a1362f95da4?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 5,
@@ -217,6 +227,7 @@ extension SearchResponse {
                 height: 4000,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1604788893124-fe5c0e999602?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1604788893124-fe5c0e999602?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 10,
@@ -234,6 +245,7 @@ extension SearchResponse {
                 height: 5261,
                 urls: URLs(
                     raw: "https://images.unsplash.com/photo-1615111784767-4d7c527f32a1?ixlib=rb-4.0.3",
+                    regular: "",
                     small: "https://images.unsplash.com/photo-1615111784767-4d7c527f32a1?ixlib=rb-4.0.3&q=80&w=400"
                 ),
                 likes: 432,

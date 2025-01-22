@@ -172,11 +172,11 @@ private extension StatisticsViewController {
         let size = imageView.bounds.size
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(
-            with: URL(string: photo.urls.raw),
+            with: URL(string: photo.urls.regular),
             options: [
-                .processor(DownsamplingImageProcessor(size: size)),
-                .scaleFactor(UIScreen.main.scale),
-                .cacheOriginalImage
+//                .processor(DownsamplingImageProcessor(size: size)),
+//                .scaleFactor(UIScreen.main.scale),
+//                .cacheOriginalImage
             ]
         )
         imageView.contentMode = .scaleAspectFill

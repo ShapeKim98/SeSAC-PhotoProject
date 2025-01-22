@@ -9,5 +9,6 @@ import Foundation
 
 struct URLs: Decodable {
     let raw: String
+    let regular: String
     let small: String
 }

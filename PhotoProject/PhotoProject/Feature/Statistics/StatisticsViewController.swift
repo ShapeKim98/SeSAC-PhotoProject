@@ -153,6 +153,7 @@ private extension StatisticsViewController {
     }
     
     func configureNavigationBar() {
+        navigationItem.largeTitleDisplayMode = .never
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.navigationBar.tintColor = .label
         navigationController?.navigationBar.topItem?.title = ""

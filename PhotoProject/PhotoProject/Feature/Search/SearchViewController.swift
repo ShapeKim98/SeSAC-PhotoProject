@@ -410,8 +410,12 @@ extension SearchViewController: UICollectionViewDelegate,
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let search else { return }
         let result = search.results[indexPath.item]
+        let statisticsViewController = StatisticsViewController(photo: result)
+        statisticsViewController.preferredTransition = .zoom { context in
+            return collectionView.cellForItem(at: indexPath)
+        }
         navigationController?.pushViewController(
-            StatisticsViewController(photo: result),
+            statisticsViewController,
             animated: true
         )
         collectionView.deselectItem(at: indexPath, animated: true)

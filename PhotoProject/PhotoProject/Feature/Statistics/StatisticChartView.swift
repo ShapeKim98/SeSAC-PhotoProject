@@ -36,6 +36,7 @@ private extension StatisticChartView {
             }
         }
         .pickerStyle(.segmented)
+        .fixedSize()
     }
     
     var chart: some View {

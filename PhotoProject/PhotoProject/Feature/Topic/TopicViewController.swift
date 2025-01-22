@@ -243,12 +243,16 @@ extension TopicViewController: UICollectionViewDelegate,
         cell.layoutIfNeeded()
         
         return cell
-    }
+    }  
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let topic = topics[collectionView.tag][indexPath.item]
+        let statisticsViewController = StatisticsViewController(photo: topic)
+        statisticsViewController.preferredTransition = .zoom { context in
+            return collectionView.cellForItem(at: indexPath)
+        }
         navigationController?.pushViewController(
-            StatisticsViewController(photo: topic),
+            statisticsViewController,
             animated: true
         )
         collectionView.deselectItem(at: indexPath, animated: true)

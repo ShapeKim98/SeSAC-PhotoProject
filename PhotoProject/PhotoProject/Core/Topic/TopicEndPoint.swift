@@ -24,15 +24,19 @@ enum TopicEndPoint: EndPoint, Sendable {
         }
     }
     
-    var parameters: [URLQueryItem]? {
+    var parameters: Parameters? {
         switch self {
         case let .fetchTopic(model):
-            let queryItems: [URLQueryItem] = [
-                URLQueryItem(name: "page", value: "\(model.page)"),
-                URLQueryItem(name: "per_page", value: "\(model.perPage)")
+            let queryItems: Parameters = [
+                "page": model.page,
+                "per_page": model.perPage
             ]
             
             return queryItems
         }
+    }
+    
+    var headers: HTTPHeaders? {
+        return .authorization
     }
 }

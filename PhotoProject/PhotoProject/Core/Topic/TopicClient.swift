@@ -7,14 +7,17 @@
 
 import Foundation
 
-actor TopicClient {
+class TopicClient {
     static let shared = TopicClient()
     
     private let provider = NetworkProvider<TopicEndPoint>()
     
     private init() { }
     
-    func fetchTopics(_ model: TopicRequest) async throws -> [TopicResponse] {
-        try await provider.request(.fetchTopic(model))
+    func fetchTopics(
+        _ model: TopicRequest,
+        completion: @escaping (Result<[TopicResponse], Error>) -> Void
+    ) {
+        provider.request(.fetchTopic(model), completion: completion)
     }
 }

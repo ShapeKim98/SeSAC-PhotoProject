@@ -24,19 +24,23 @@ enum SearchEndPoint: EndPoint, Sendable {
         }
     }
     
-    var parameters: [URLQueryItem]? {
+    var parameters: Parameters? {
         switch self {
         case let .fetchSearch(model):
-            var queryItems = [
-                URLQueryItem(name: "query", value: model.query),
-                URLQueryItem(name: "page", value: "\(model.page)"),
-                URLQueryItem(name: "per_page", value: "\(model.perPage)"),
-                URLQueryItem(name: "order_by", value: "\(model.orderBy)"),
+            var queryItems: Parameters = [
+                "query": model.query,
+                "page": model.page,
+                "per_page": model.perPage,
+                "order_by": model.orderBy
             ]
             if let color = model.color {
-                queryItems.append(URLQueryItem(name: "color", value: color))
+                queryItems.updateValue(color, forKey: "color")
             }
             return queryItems
         }
+    }
+    
+    var headers: HTTPHeaders? {
+        return .authorization
     }
 }

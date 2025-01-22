@@ -153,6 +153,7 @@ private extension StatisticsViewController {
     }
     
     func configureNavigationBar() {
+        navigationItem.largeTitleDisplayMode = .never
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.navigationBar.tintColor = .label
         navigationController?.navigationBar.topItem?.title = ""
@@ -259,19 +260,17 @@ private extension StatisticsViewController {
 // MARK: Functions
 private extension StatisticsViewController {
     func fetchStatistics() {
-        Task { [weak self] in
+        statisticsClient.fetchStatistics(photo.id) { [weak self] result in
             guard let `self` else { return }
-            
-            do {
-                self.statistics = try await statisticsClient.fetchStatistics(photo.id)
-            } catch {
-                if let baseError = error as? BaseError {
-                    presentAlert(
-                        title: "오류",
-                        message: baseError.errors.joined(separator: "\n")
-                    )
+            switch result {
+            case .success(let success):
+                self.statistics = success
+            case .failure(let failure):
+                if let baseError = failure as? BaseError {
+                    let message =  baseError.errors.joined(separator: "\n")
+                    self.presentAlert(title: "오류", message: message)
                 } else {
-                    print(error)
+                    print(failure)
                 }
             }
         }

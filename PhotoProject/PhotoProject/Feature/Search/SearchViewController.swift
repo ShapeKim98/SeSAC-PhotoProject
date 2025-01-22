@@ -242,30 +242,24 @@ private extension SearchViewController {
     }
     
     func fetchSearch() {
-        Task { [weak self] in
+        self.isLoading = true
+        self.page = 1
+        let request = SearchRequest(
+            query: self.query,
+            page: self.page,
+            perPage: 20,
+            orderBy: self.sort.rawValue,
+            color: self.colorFilter?.rawValue
+        )
+        searchClient.fetchSearch(request) { [weak self] result in
             guard let `self` else { return }
-            self.isLoading = true
-            defer { self.isLoading = false }
-            
-            let request = SearchRequest(
-                query: self.query,
-                page: self.page,
-                perPage: 20,
-                orderBy: self.sort.rawValue,
-                color: self.colorFilter?.rawValue
-            )
-            do {
-                self.search = try await searchClient.fetchSearch(request)
-            } catch {
-                if let baseError = error as? BaseError {
-                    presentAlert(
-                        title: "오류",
-                        message: baseError.errors.joined(separator: "\n")
-                    )
-                } else {
-                    print(error)
-                }
+            switch result {
+            case .success(let success):
+                self.search = success
+            case .failure(let failure):
+                handleFailure(failure)
             }
+            self.isLoading = false
         }
     }
     
@@ -277,32 +271,34 @@ private extension SearchViewController {
             page < search.totalPages
         else { return }
         
-        Task { [weak self] in
+        self.isPaging = true
+        self.page += 1
+        
+        let request = SearchRequest(
+            query: self.query,
+            page: self.page,
+            perPage: 20,
+            orderBy: self.sort.rawValue,
+            color: self.colorFilter?.rawValue
+        )
+        searchClient.fetchSearch(request) { [weak self] result in
             guard let `self` else { return }
-            self.isPaging = true
-            defer { isPaging = false }
-            self.page += 1
-            
-            let request = SearchRequest(
-                query: self.query,
-                page: self.page,
-                perPage: 20,
-                orderBy: self.sort.rawValue,
-                color: self.colorFilter?.rawValue
-            )
-            
-            do {
-                self.search?.results += try await searchClient.fetchSearch(request).results
-            } catch {
-                if let baseError = error as? BaseError {
-                    presentAlert(
-                        title: "오류",
-                        message: baseError.errors.joined(separator: "\n")
-                    )
-                } else {
-                    print(error)
-                }
+            switch result {
+            case .success(let success):
+                self.search?.results += success.results
+            case .failure(let failure):
+                handleFailure(failure)
             }
+            self.isPaging = false
+        }
+    }
+    
+    func handleFailure(_ failure: Error) {
+        if let baseError = failure as? BaseError {
+            let message =  baseError.errors.joined(separator: "\n")
+            self.presentAlert(title: "오류", message: message)
+        } else {
+            print(failure)
         }
     }
 }
@@ -414,8 +410,12 @@ extension SearchViewController: UICollectionViewDelegate,
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let search else { return }
         let result = search.results[indexPath.item]
+        let statisticsViewController = StatisticsViewController(photo: result)
+        statisticsViewController.preferredTransition = .zoom { context in
+            return collectionView.cellForItem(at: indexPath)
+        }
         navigationController?.pushViewController(
-            StatisticsViewController(photo: result),
+            statisticsViewController,
             animated: true
         )
         collectionView.deselectItem(at: indexPath, animated: true)

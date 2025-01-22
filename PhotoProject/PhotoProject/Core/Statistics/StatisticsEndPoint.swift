@@ -24,9 +24,14 @@ enum StatisticsEndPoint: EndPoint, Sendable {
         }
     }
     
-    var parameters: [URLQueryItem]? {
+    var parameters: Parameters? {
         switch self {
         case .fetchStatistics: return nil
         }
     }
+    
+    var headers: HTTPHeaders? {
+        return .authorization
+    }
+    
 }

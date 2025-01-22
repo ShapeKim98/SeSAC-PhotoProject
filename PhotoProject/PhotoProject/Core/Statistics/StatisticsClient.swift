@@ -7,14 +7,17 @@
 
 import Foundation
 
-actor StatisticsClient {
+class StatisticsClient {
     static let shared = StatisticsClient()
     
     private let provider = NetworkProvider<StatisticsEndPoint>()
     
     private init() { }
     
-    func fetchStatistics(_ id: String) async throws -> StatisticsResponse {
-        try await provider.request(.fetchStatistics(id))
+    func fetchStatistics(
+        _ id: String,
+        completion: @escaping (Result<StatisticsResponse, Error>) -> Void
+    ) {
+        provider.request(.fetchStatistics(id), completion: completion)
     }
 }

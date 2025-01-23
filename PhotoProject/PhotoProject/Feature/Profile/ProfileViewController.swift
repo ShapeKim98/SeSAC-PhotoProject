@@ -106,6 +106,11 @@ class ProfileViewController: UIViewController {
             action: #selector(birthdayButtonTouchUpInside),
             for: .touchUpInside
         )
+        levelButton.addTarget(
+            self,
+            action: #selector(levelButtonTouchUpInside),
+            for: .touchUpInside
+        )
 
         nicknameLabel.text = "NO NAME"
         nicknameLabel.textColor = .lightGray
@@ -138,7 +143,9 @@ private extension ProfileViewController {
     
     @objc
     func levelButtonTouchUpInside() {
-        
+        let viewController = LevelViewController()
+        viewController.delegate = self
+        push(viewController)
     }
     
     @objc
@@ -154,5 +161,11 @@ private extension ProfileViewController {
         case .okButtonTapped(let nickname):
             nicknameLabel.text = nickname
         }
+    }
+}
+
+extension ProfileViewController: LevelViewControllerDelegate {
+    func okLevelButtonTapped(_ level: String?) {
+        levelLabel.text = level
     }
 }

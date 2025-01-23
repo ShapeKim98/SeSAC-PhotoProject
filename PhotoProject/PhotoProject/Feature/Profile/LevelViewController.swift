@@ -8,9 +8,15 @@
 import UIKit
 import SnapKit
 
+protocol LevelViewControllerDelegate: AnyObject {
+    func okLevelButtonTapped(_ level: String?)
+}
+
 class LevelViewController: UIViewController {
 
     let segmentedControl = UISegmentedControl(items: ["상", "중", "하"])
+    
+    weak var delegate: (any LevelViewControllerDelegate)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +25,10 @@ class LevelViewController: UIViewController {
     
     @objc func okButtonTapped() {
         print(#function)
+        let index = segmentedControl.selectedSegmentIndex
+        let level = segmentedControl.titleForSegment(at: index)
+        delegate?.okLevelButtonTapped(level)
+        pop()
     }
     
     func configureView() {

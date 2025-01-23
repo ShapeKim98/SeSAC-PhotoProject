@@ -8,7 +8,9 @@
 import UIKit
 
 import SnapKit
+import BaseKit
 
+@Configurable
 final class SearchViewController: UIViewController {
     private let colorButtonScrollView = UIScrollView()
     private let colorButtonHStack = UIStackView()
@@ -41,6 +43,8 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .systemBackground
+        
         configureUI()
         
         configureLayout()
@@ -51,30 +55,111 @@ final class SearchViewController: UIViewController {
         
         configureNavigationBar()
     }
+    
+    private func configureNavigationBar() {
+        navigationItem.title = "SEARCH PHOTO"
+    }
+    
+    private func configureSearchController() {
+        let searchController = UISearchController()
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.placeholder = "키워드 검색"
+        searchController.automaticallyShowsCancelButton = false
+        searchController.searchBar.delegate = self
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController = searchController
+    }
+    
+    private func configureColorButtons() {
+        for filter in ColorFilter.allCases {
+            let colorButton = ColorButton(filter: filter)
+            colorButton.addTarget(
+                self,
+                action: #selector(colorButtonTouchUpInside),
+                for: .touchUpInside
+            )
+            colorButtons.append(colorButton)
+            colorButtonHStack.addArrangedSubview(colorButton)
+        }
+    }
+    
+    private func configureColorButtonHStack() {
+        colorButtonHStack.axis = .horizontal
+        colorButtonHStack.spacing = 8
+        colorButtonHStack.distribution = .fillProportionally
+        colorButtonHStack.alignment = .leading
+        colorButtonScrollView.addSubview(colorButtonHStack)
+    }
+    
+    private func configureColorButtonScrollView() {
+        colorButtonScrollView.showsHorizontalScrollIndicator = false
+        view.addSubview(colorButtonScrollView)
+    }
+    
+    private func configureSortButton() {
+        sortButton.tintColor = .label
+        
+        var configuration = UIButton.Configuration.plain()
+        configuration.cornerStyle = .capsule
+        configuration.background.backgroundColor = .systemBackground
+        configuration.imagePlacement = .leading
+        configuration.imagePadding = 4
+        configuration.attributedTitle = AttributedString(
+            sort.title,
+            attributes: AttributeContainer([
+                .foregroundColor: UIColor.label,
+                .font: UIFont.systemFont(ofSize: 14, weight: .bold)
+            ])
+        )
+        configuration.background.strokeColor = .separator
+        configuration.background.strokeWidth = 1
+        configuration.image = UIImage(systemName: "arrow.up.arrow.down")
+        sortButton.configuration = configuration
+        sortButton.addTarget(
+            self,
+            action: #selector(sortButtonTouchUpInside),
+            for: .touchUpInside
+        )
+        view.addSubview(sortButton)
+    }
+    
+    private func configureCollectionView() -> UICollectionView {
+        let collectionView = VerticalCollectionView(
+            superSize: view.frame,
+            multipliedBy: 1.2,
+            colCount: 2,
+            colSpacing: 8,
+            rowSpacing: 8,
+            inset: UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
+        )
+        
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.prefetchDataSource = self
+        
+        collectionView.register(
+            SearchCollectionViewCell.self,
+            forCellWithReuseIdentifier: .searchCollectionCell
+        )
+        view.addSubview(collectionView)
+        
+        return collectionView
+    }
+    
+    private func configureNoticeLabel() {
+        noticeLabel.text = "사진을 검색해보세요."
+        noticeLabel.font = .systemFont(ofSize: 16, weight: .bold)
+        view.addSubview(noticeLabel)
+    }
+    
+    private func configureActivityIndicator() {
+        activityIndicatorView.isHidden = true
+        collectionView.addSubview(activityIndicatorView)
+    }
 }
 
 // MARK: Configure View
 private extension SearchViewController {
-    func configureUI() {
-        view.backgroundColor = .systemBackground
-        
-        configureNavigationBar()
-        
-        configureSearchController()
-        
-        configureColorButtons()
-        
-        configureColorButtonHStack()
-        
-        configureColorButtonScrollView()
-        
-        configureSortButton()
-        
-        configureNoticeLabel()
-        
-        configureActivityIndicator()
-    }
-    
     func configureLayout() {
         colorButtonScrollView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
@@ -114,107 +199,6 @@ private extension SearchViewController {
         activityIndicatorView.snp.makeConstraints { make in
             make.center.equalTo(collectionView)
         }
-    }
-    
-    func configureNavigationBar() {
-        navigationItem.title = "SEARCH PHOTO"
-    }
-    
-    func configureSearchController() {
-        let searchController = UISearchController()
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.placeholder = "키워드 검색"
-        searchController.automaticallyShowsCancelButton = false
-        searchController.searchBar.delegate = self
-        navigationItem.hidesSearchBarWhenScrolling = false
-        navigationItem.searchController = searchController
-    }
-    
-    func configureColorButtons() {
-        for filter in ColorFilter.allCases {
-            let colorButton = ColorButton(filter: filter)
-            colorButton.addTarget(
-                self,
-                action: #selector(colorButtonTouchUpInside),
-                for: .touchUpInside
-            )
-            colorButtons.append(colorButton)
-            colorButtonHStack.addArrangedSubview(colorButton)
-        }
-    }
-    
-    func configureColorButtonHStack() {
-        colorButtonHStack.axis = .horizontal
-        colorButtonHStack.spacing = 8
-        colorButtonHStack.distribution = .fillProportionally
-        colorButtonHStack.alignment = .leading
-        colorButtonScrollView.addSubview(colorButtonHStack)
-    }
-    
-    func configureColorButtonScrollView() {
-        colorButtonScrollView.showsHorizontalScrollIndicator = false
-        view.addSubview(colorButtonScrollView)
-    }
-    
-    func configureSortButton() {
-        sortButton.tintColor = .label
-        
-        var configuration = UIButton.Configuration.plain()
-        configuration.cornerStyle = .capsule
-        configuration.background.backgroundColor = .systemBackground
-        configuration.imagePlacement = .leading
-        configuration.imagePadding = 4
-        configuration.attributedTitle = AttributedString(
-            sort.title,
-            attributes: AttributeContainer([
-                .foregroundColor: UIColor.label,
-                .font: UIFont.systemFont(ofSize: 14, weight: .bold)
-            ])
-        )
-        configuration.background.strokeColor = .separator
-        configuration.background.strokeWidth = 1
-        configuration.image = UIImage(systemName: "arrow.up.arrow.down")
-        sortButton.configuration = configuration
-        sortButton.addTarget(
-            self,
-            action: #selector(sortButtonTouchUpInside),
-            for: .touchUpInside
-        )
-        view.addSubview(sortButton)
-    }
-    
-    func configureCollectionView() -> UICollectionView {
-        let collectionView = VerticalCollectionView(
-            superSize: view.frame,
-            multipliedBy: 1.2,
-            colCount: 2,
-            colSpacing: 8,
-            rowSpacing: 8,
-            inset: UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
-        )
-        
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.prefetchDataSource = self
-        
-        collectionView.register(
-            SearchCollectionViewCell.self,
-            forCellWithReuseIdentifier: .searchCollectionCell
-        )
-        view.addSubview(collectionView)
-        
-        return collectionView
-    }
-    
-    func configureNoticeLabel() {
-        noticeLabel.text = "사진을 검색해보세요."
-        noticeLabel.font = .systemFont(ofSize: 16, weight: .bold)
-        view.addSubview(noticeLabel)
-    }
-    
-    func configureActivityIndicator() {
-        activityIndicatorView.isHidden = true
-        collectionView.addSubview(activityIndicatorView)
     }
 }
 

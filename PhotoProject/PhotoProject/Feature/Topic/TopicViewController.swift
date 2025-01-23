@@ -8,7 +8,9 @@
 import UIKit
 
 import SnapKit
+import BaseKit
 
+@Configurable
 final class TopicViewController: UIViewController {
     private var topicCollectionViews = [TopicCollectionViewContainer]()
     private let vstack = UIStackView()
@@ -33,6 +35,8 @@ final class TopicViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .systemBackground
+        
         configureUI()
         
         configureLayout()
@@ -45,26 +49,56 @@ final class TopicViewController: UIViewController {
         
         configureNavigationBar()
     }
+    
+    private func configureNavigationBar() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.title = "OUR TOPIC"
+    }
+    
+    private func configureScrollView() {
+        scrollView.isScrollEnabled = true
+        scrollView.refreshControl = UIRefreshControl()
+        scrollView.refreshControl?.addTarget(
+            self,
+            action: #selector(refreshControlValueChanged),
+            for: .valueChanged
+        )
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+    }
+    
+    private func configureVStack() {
+        vstack.axis = .vertical
+        vstack.spacing = 16
+        vstack.distribution = .fill
+        vstack.alignment = .center
+        contentView.addSubview(vstack)
+    }
+    
+    private func configureCollectionViews() {
+        for (index, topic) in topics.enumerated() {
+            let type = topicTypes[index]
+            
+            let container = TopicCollectionViewContainer(
+                title: type.title,
+                topic: topic,
+                tag: index
+            )
+            container.collectionView.delegate = self
+            container.collectionView.dataSource = self
+            topicCollectionViews.append(container)
+            vstack.addArrangedSubview(container)
+        }
+    }
+    
+    private func configureActivityIndicator() {
+        activityIndicatorView.isHidden = true
+        view.addSubview(activityIndicatorView)
+    }
 }
 
 // MARK: Configure View
 private extension TopicViewController {
-    func configureUI() {
-        view.backgroundColor = .systemBackground
-        
-        configureNavigationBar()
-        
-        configureScrollView()
-        
-        scrollView.addSubview(contentView)
-        
-        configureVStack()
-        
-        configureCollectionViews()
-        
-        configureActivityIndicator()
-    }
-    
     func configureLayout() {
         scrollView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
@@ -88,51 +122,6 @@ private extension TopicViewController {
         activityIndicatorView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-    }
-    
-    func configureNavigationBar() {
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.title = "OUR TOPIC"
-    }
-    
-    func configureScrollView() {
-        scrollView.isScrollEnabled = true
-        scrollView.refreshControl = UIRefreshControl()
-        scrollView.refreshControl?.addTarget(
-            self,
-            action: #selector(refreshControlValueChanged),
-            for: .valueChanged
-        )
-        view.addSubview(scrollView)
-    }
-    
-    func configureVStack() {
-        vstack.axis = .vertical
-        vstack.spacing = 16
-        vstack.distribution = .fill
-        vstack.alignment = .center
-        contentView.addSubview(vstack)
-    }
-    
-    func configureCollectionViews() {
-        for (index, topic) in topics.enumerated() {
-            let type = topicTypes[index]
-            
-            let container = TopicCollectionViewContainer(
-                title: type.title,
-                topic: topic,
-                tag: index
-            )
-            container.collectionView.delegate = self
-            container.collectionView.dataSource = self
-            topicCollectionViews.append(container)
-            vstack.addArrangedSubview(container)
-        }
-    }
-    
-    func configureActivityIndicator() {
-        activityIndicatorView.isHidden = true
-        view.addSubview(activityIndicatorView)
     }
 }
 

@@ -7,21 +7,35 @@
 
 import UIKit
 import SnapKit
+import BaseKit
 
-class NicknameViewController: UIViewController {
-
-    let textField = UITextField()
+@Configurable
+final class NicknameViewController: UIViewController {
+    enum Delegate {
+        case okButtonTapped(nickname: String?)
+    }
+    
+    private let textField = UITextField()
+    private var delegateAction: ((Delegate) -> Void)?
+    
+    init(delegateAction: ((Delegate) -> Void)?) {
+        self.delegateAction = delegateAction
+        
+        super.init(nibName: nil, bundle: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
+        configureUI()
     }
     
-    @objc func okButtonTapped() {
-        print(#function)
+    @objc
+    private func okButtonTapped() {
+        delegateAction?(.okButtonTapped(nickname: textField.text))
+        pop()
     }
     
-    func configureView() {
+    private func configureView() {
         navigationItem.title = "닉네임"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "확인", style: .plain, target: self, action: #selector(okButtonTapped))
         view.backgroundColor = .white

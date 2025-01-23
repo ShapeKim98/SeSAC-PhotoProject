@@ -19,7 +19,7 @@ extension UIViewController {
         present(alert, animated: true)
     }
     
-    func switchRootViewController(_ viewController: UIViewController) {
+    func switchRoot(_ viewController: UIViewController) {
         let scene = UIApplication.shared.connectedScenes.first
         guard
             let windowScene = scene as? UIWindowScene,
@@ -27,5 +27,13 @@ extension UIViewController {
         else { return }
         window.rootViewController = viewController
         window.makeKeyAndVisible()
+    }
+    
+    func push(_ viewController: UIViewController) {
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    func pop() {
+        navigationController?.popViewController(animated: true)
     }
 }

@@ -10,24 +10,25 @@ import SnapKit
 
 class ProfileViewController: UIViewController {
 
-    let nicknameButton = UIButton()
-    let birthdayButton = UIButton()
-    let levelButton = UIButton()
+    private let nicknameButton = UIButton()
+    private let birthdayButton = UIButton()
+    private let levelButton = UIButton()
     
-    let nicknameLabel = UILabel()
-    let birthdayLabel = UILabel()
-    let levelLabel = UILabel()
+    private let nicknameLabel = UILabel()
+    private let birthdayLabel = UILabel()
+    private let levelLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
     }
 
-    @objc func okButtonTapped() {
+    @objc
+    private func okButtonTapped() {
         print(#function)
     }
     
-    func configureView() {
+    private func configureView() {
         navigationItem.title = "프로필 화면"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "탈퇴하기", style: .plain, target: self, action: #selector(okButtonTapped))
         view.backgroundColor = .white
@@ -80,8 +81,6 @@ class ProfileViewController: UIViewController {
             make.leading.equalTo(levelButton.snp.trailing).offset(24)
             make.height.equalTo(50)
         }
-
-        
         
         nicknameButton.setTitleColor(.black, for: .normal)
         birthdayButton.setTitleColor(.black, for: .normal)
@@ -90,6 +89,12 @@ class ProfileViewController: UIViewController {
         nicknameButton.setTitle("닉네임", for: .normal)
         birthdayButton.setTitle("생일", for: .normal)
         levelButton.setTitle("레벨", for: .normal)
+        
+        nicknameButton.addTarget(
+            self,
+            action: #selector(nicknameButtonTouchUpInside),
+            for: .touchUpInside
+        )
 
         nicknameLabel.text = "NO NAME"
         nicknameLabel.textColor = .lightGray
@@ -103,6 +108,34 @@ class ProfileViewController: UIViewController {
         levelLabel.textColor = .lightGray
         levelLabel.textAlignment = .right
     }
+}
+
+// MARK: Functions
+private extension ProfileViewController {
+    @objc
+    func nicknameButtonTouchUpInside() {
+        let viewController = NicknameViewController(
+            delegateAction: scopeNicknameViewController
+        )
+        push(viewController)
+    }
     
- 
+    @objc
+    func birthdayButtonTouchUpInside() {
+        
+    }
+    
+    @objc
+    func levelButtonTouchUpInside() {
+        
+    }
+    
+    func scopeNicknameViewController(
+        _ action: NicknameViewController.Delegate
+    ) {
+        switch action {
+        case .okButtonTapped(let nickname):
+            nicknameLabel.text = nickname
+        }
+    }
 }

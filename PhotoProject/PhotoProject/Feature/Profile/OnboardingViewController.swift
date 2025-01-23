@@ -34,7 +34,7 @@ final class OnboardingViewController: UIViewController {
     @objc
     func buttonTouchUpInside() {
         let viewController = ProfileViewController()
-        switchRootViewController(UINavigationController(
+        switchRoot(UINavigationController(
             rootViewController: viewController
         ))
     }

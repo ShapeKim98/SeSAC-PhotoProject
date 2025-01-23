@@ -8,9 +8,9 @@
 import UIKit
 import SnapKit
 
-class OnboardingViewController: UIViewController {
+final class OnboardingViewController: UIViewController {
 
-    let button = UIButton()
+    private let button = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +24,18 @@ class OnboardingViewController: UIViewController {
         button.backgroundColor = .white
         button.setTitleColor(.darkGray, for: .normal)
         button.setTitle("시작하기", for: .normal)
+        button.addTarget(
+            self,
+            action: #selector(buttonTouchUpInside),
+            for: .touchUpInside
+        )
     }
     
- 
+    @objc
+    func buttonTouchUpInside() {
+        let viewController = ProfileViewController()
+        switchRootViewController(UINavigationController(
+            rootViewController: viewController
+        ))
+    }
 }

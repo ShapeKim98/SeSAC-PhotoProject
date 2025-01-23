@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window?.windowScene = scene
         
-        let root = ViewController()
+        let root = OnboardingViewController()
         window?.rootViewController = root
         window?.makeKeyAndVisible()
     }

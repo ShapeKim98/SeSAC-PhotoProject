@@ -125,7 +125,7 @@ class ProfileViewController: UIViewController {
         nicknameButton.setTitle("닉네임", for: .normal)
         birthdayButton.setTitle("생일", for: .normal)
         levelButton.setTitle("레벨", for: .normal)
-        saveButton.setTitle("시작하기", for: .normal)
+        saveButton.setTitle("저장하기", for: .normal)
         
         saveButton.layer.cornerRadius = 25
         

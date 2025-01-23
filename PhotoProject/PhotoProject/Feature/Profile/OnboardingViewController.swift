@@ -37,10 +37,9 @@ final class OnboardingViewController: UIViewController {
     }
     
     @objc
-    func buttonTouchUpInside() {
+    private func buttonTouchUpInside() {
         let viewController = ProfileViewController()
         authenticated = true
-        print(authenticated)
         switchRoot(UINavigationController(
             rootViewController: viewController
         ))

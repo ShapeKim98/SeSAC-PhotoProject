@@ -14,10 +14,10 @@ protocol LevelViewControllerDelegate: AnyObject {
 }
 
 @Configurable
-class LevelViewController: UIViewController {
+final class LevelViewController: UIViewController {
     static let segmentItems = ["상", "중", "하"]
     
-    let segmentedControl = UISegmentedControl(items: LevelViewController.segmentItems)
+    private let segmentedControl = UISegmentedControl(items: LevelViewController.segmentItems)
     
     weak var delegate: (any LevelViewControllerDelegate)?
     
@@ -34,7 +34,8 @@ class LevelViewController: UIViewController {
         configureUI()
     }
     
-    @objc func okButtonTapped() {
+    @objc
+    private func okButtonTapped() {
         print(#function)
         let index = segmentedControl.selectedSegmentIndex
         let level = segmentedControl.titleForSegment(at: index)
@@ -42,7 +43,7 @@ class LevelViewController: UIViewController {
         pop()
     }
     
-    func configureView() {
+    private func configureView() {
         navigationItem.title = "레벨"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "확인", style: .plain, target: self, action: #selector(okButtonTapped))
         view.backgroundColor = .white

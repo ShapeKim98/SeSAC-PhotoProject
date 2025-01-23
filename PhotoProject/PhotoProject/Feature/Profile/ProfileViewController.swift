@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
 
     private let nicknameButton = UIButton()
     private let birthdayButton = UIButton()

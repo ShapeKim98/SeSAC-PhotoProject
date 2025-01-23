@@ -16,7 +16,6 @@ struct UserDefaults<T> {
         self.key = forKey
         self.defaultValue = defaultValue
         let object = Foundation.UserDefaults.standard.object(forKey: forKey)
-        print(object)
         if object == nil && defaultValue != nil {
             Foundation.UserDefaults.standard.set(defaultValue, forKey: key)
         }

@@ -10,9 +10,9 @@ import SnapKit
 import BaseKit
 
 @Configurable
-class BirthdayViewController: UIViewController {
+final class BirthdayViewController: UIViewController {
 
-    let datePicker = UIDatePicker()
+    private let datePicker = UIDatePicker()
     
     init(birthday: String?) {
         let date = birthday?.date(format: .yyyy년_M월_d일)
@@ -26,7 +26,8 @@ class BirthdayViewController: UIViewController {
         configureUI()
     }
     
-    @objc func okButtonTapped() {
+    @objc
+    private func okButtonTapped() {
         print(#function)
         let value = datePicker.date.string(format: .yyyy년_M월_d일)
         published(
@@ -36,7 +37,7 @@ class BirthdayViewController: UIViewController {
         pop()
     }
     
-    func configureView() {
+    private func configureView() {
         navigationItem.title = "생일"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "확인", style: .plain, target: self, action: #selector(okButtonTapped))
         view.backgroundColor = .white

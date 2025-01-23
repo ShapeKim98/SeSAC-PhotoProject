@@ -41,6 +41,12 @@ final class NicknameViewController: UIViewController {
     private func configureView() {
         navigationItem.title = "닉네임"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "확인", style: .plain, target: self, action: #selector(okButtonTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(okButtonTapped)
+        )
         view.backgroundColor = .white
         view.addSubview(textField)
         textField.snp.makeConstraints { make in

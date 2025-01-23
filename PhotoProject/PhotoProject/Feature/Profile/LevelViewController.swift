@@ -46,6 +46,12 @@ final class LevelViewController: UIViewController {
     private func configureView() {
         navigationItem.title = "레벨"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "확인", style: .plain, target: self, action: #selector(okButtonTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(okButtonTapped)
+        )
         view.backgroundColor = .white
         view.addSubview(segmentedControl)
         segmentedControl.snp.makeConstraints { make in

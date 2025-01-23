@@ -40,6 +40,12 @@ final class BirthdayViewController: UIViewController {
     private func configureView() {
         navigationItem.title = "생일"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "확인", style: .plain, target: self, action: #selector(okButtonTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(okButtonTapped)
+        )
         view.backgroundColor = .white
         view.addSubview(datePicker)
         datePicker.snp.makeConstraints { make in

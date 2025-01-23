@@ -19,6 +19,12 @@ class BirthdayViewController: UIViewController {
     
     @objc func okButtonTapped() {
         print(#function)
+        let value = datePicker.date.string(format: .yyyy년_M월_d일)
+        published(
+            name: "BirthdayViewController",
+            userInfo: ["birthday": value]
+        )
+        pop()
     }
     
     func configureView() {

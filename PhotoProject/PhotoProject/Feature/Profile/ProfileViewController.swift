@@ -21,6 +21,12 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        
+        subscribed(
+            observer: self,
+            selector: #selector(sinkBirthDayPublisher),
+            name: "BirthdayViewController"
+        )
     }
 
     @objc
@@ -95,6 +101,11 @@ class ProfileViewController: UIViewController {
             action: #selector(nicknameButtonTouchUpInside),
             for: .touchUpInside
         )
+        birthdayButton.addTarget(
+            self,
+            action: #selector(birthdayButtonTouchUpInside),
+            for: .touchUpInside
+        )
 
         nicknameLabel.text = "NO NAME"
         nicknameLabel.textColor = .lightGray
@@ -122,12 +133,18 @@ private extension ProfileViewController {
     
     @objc
     func birthdayButtonTouchUpInside() {
-        
+        push(BirthdayViewController())
     }
     
     @objc
     func levelButtonTouchUpInside() {
         
+    }
+    
+    @objc
+    func sinkBirthDayPublisher(_ notification: Notification) {
+        let value = notification.userInfo?["birthday"] as? String
+        birthdayLabel.text = value
     }
     
     func scopeNicknameViewController(

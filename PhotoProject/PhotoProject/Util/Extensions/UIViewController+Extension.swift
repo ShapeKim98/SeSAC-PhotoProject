@@ -36,4 +36,21 @@ extension UIViewController {
     func pop() {
         navigationController?.popViewController(animated: true)
     }
+    
+    func subscribed(observer: Any, selector: Selector, name: String) {
+        NotificationCenter.default.addObserver(
+            observer,
+            selector: selector,
+            name: NSNotification.Name(name),
+            object: nil
+        )
+    }
+    
+    func published(name: String, userInfo: [AnyHashable: Any]) {
+        NotificationCenter.default.post(
+            name: NSNotification.Name(name),
+            object: nil,
+            userInfo: userInfo
+        )
+    }
 }

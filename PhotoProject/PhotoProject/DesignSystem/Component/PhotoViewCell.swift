@@ -28,10 +28,6 @@ class PhotoViewCell: UIView {
         configureLayout()
     }
     
-    required init?(coder: NSCoder) {
-fatalError("init(coder:) has not been implemented")
-    }
-    
     func cellForItemAt<C: PhotoCellProtocol>(_ result: C) {
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(

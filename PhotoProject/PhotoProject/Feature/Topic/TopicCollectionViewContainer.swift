@@ -8,7 +8,9 @@
 import UIKit
 
 import SnapKit
+import BaseKit
 
+@Configurable
 final class TopicCollectionViewContainer: UIView {
     private let titleLabel = UILabel()
     lazy var collectionView: UICollectionView = {
@@ -24,28 +26,25 @@ final class TopicCollectionViewContainer: UIView {
         super.init(frame: .zero)
         self.collectionView.tag = tag
         
+        addSubview(collectionView)
         configureUI()
         
         configureLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     func setTitle(_ title: String) {
         self.titleLabel.text = title
         self.title = title
     }
+    
+    private func configureTitleLabel() {
+        titleLabel.text = title
+        titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        addSubview(titleLabel)
+    }
 }
 
 private extension TopicCollectionViewContainer {
-    func configureUI() {
-        addSubview(collectionView)
-        
-        configureTitleLabel()
-    }
-    
     func configureLayout() {
         titleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
@@ -84,11 +83,5 @@ private extension TopicCollectionViewContainer {
         )
         
         return collectionView
-    }
-    
-    func configureTitleLabel() {
-        titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
-        addSubview(titleLabel)
     }
 }

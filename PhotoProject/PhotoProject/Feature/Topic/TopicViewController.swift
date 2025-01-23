@@ -28,7 +28,7 @@ final class TopicViewController: UIViewController {
     private var topicTypes = TopicType.allCases.shuffled() {
         didSet { didSetTopicTypes() }
     }
-    
+
     private let topicClient = TopicClient.shared
     private var lastTime = CFAbsoluteTimeGetCurrent()
 

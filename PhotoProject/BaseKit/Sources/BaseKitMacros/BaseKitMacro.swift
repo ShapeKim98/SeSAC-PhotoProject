@@ -14,21 +14,34 @@ public struct ConfigurableMacro: MemberMacro {
         }
         let members = classDecl.memberBlock.members
         
+        var decls = [DeclSyntax]()
+        
+        if members.contains(where: { $0.decl.is(InitializerDeclSyntax.self) }) {
+            decls.append(DeclSyntax(stringLiteral:"""
+            @available(*, unavailable)
+            required init?(coder: NSCoder) {
+                fatalError("init(coder:) has not been implemented")
+            }
+            """))
+        }
+        
         let funcDecls = members.compactMap { $0.decl.as(FunctionDeclSyntax.self)?.name.text }
         let configureFuncDecl = funcDecls.filter {
             $0 != "configureUI"
             && $0 != "configureLayout"
             && $0.hasPrefix("configure")
         }
-        let calls = configureFuncDecl.map { "\($0)()" }.joined(separator: "\n")
-        
-        let configureUIFunc = DeclSyntax(stringLiteral:"""
-        private func configureUI() {
-            \(calls)
+        if !configureFuncDecl.isEmpty {
+            let calls = configureFuncDecl.map { "\($0)()" }.joined(separator: "\n")
+            
+            decls.append(DeclSyntax(stringLiteral:"""
+            private func configureUI() {
+                \(calls)
+            }
+            """))
         }
-        """)
         
-        return [configureUIFunc]
+        return decls
     }
 }
 

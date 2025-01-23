@@ -7,7 +7,7 @@
 
 import Foundation
 
-class StatisticsClient {
+final class StatisticsClient {
     static let shared = StatisticsClient()
     
     private let provider = NetworkProvider<StatisticsEndPoint>()

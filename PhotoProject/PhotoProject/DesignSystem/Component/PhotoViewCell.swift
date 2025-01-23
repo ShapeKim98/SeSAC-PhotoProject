@@ -9,7 +9,9 @@ import UIKit
 
 import Kingfisher
 import SnapKit
+import BaseKit
 
+@Configurable
 class PhotoViewCell: UIView {
     private let imageView = UIImageView()
     private let likesLabel = UILabel()
@@ -26,14 +28,11 @@ class PhotoViewCell: UIView {
         configureLayout()
     }
     
-    required init?(coder: NSCoder) {
-fatalError("init(coder:) has not been implemented")
-    }
-    
     func cellForItemAt<C: PhotoCellProtocol>(_ result: C) {
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(
-            with: URL(string: result.urls.small)
+            with: URL(string: result.urls.small),
+            options: [.transition(.fade(0.3))]
         )
         
         likesLabel.text = result.likes.formatted()
@@ -47,34 +46,8 @@ fatalError("init(coder:) has not been implemented")
         let cornerRadius = likesLabelBackgroundView.frame.height / 2
         likesLabelBackgroundView.layer.cornerRadius = cornerRadius
     }
-}
-
-private extension PhotoViewCell {
-    func configureUI() {
-        configureImageView()
-        
-        configureLikesLabelBackgroundView()
-        
-        configureLikesLabel()
-    }
     
-    func configureLayout() {
-        imageView.snp.makeConstraints { make in
-            make.width.equalToSuperview()
-            make.height.equalTo(imageView.snp.width).multipliedBy(1.2)
-        }
-        
-        likesLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(12)
-            make.verticalEdges.equalToSuperview().inset(8)
-        }
-        
-        likesLabelBackgroundView.snp.makeConstraints { make in
-            make.bottom.leading.equalToSuperview().inset(20)
-        }
-    }
-    
-    func configureImageView() {
+    private func configureImageView() {
         if isTopic {
             imageView.layer.cornerRadius = 16
             imageView.clipsToBounds = true
@@ -84,13 +57,13 @@ private extension PhotoViewCell {
         addSubview(imageView)
     }
     
-    func configureLikesLabelBackgroundView() {
+    private func configureLikesLabelBackgroundView() {
         likesLabelBackgroundView.backgroundColor = .darkGray
         likesLabelBackgroundView.addSubview(likesLabel)
         addSubview(likesLabelBackgroundView)
     }
     
-    func configureLikesLabel() {
+    private func configureLikesLabel() {
         likesLabel.textColor = .white
         likesLabel.font = .systemFont(ofSize: 14)
         
@@ -104,6 +77,24 @@ private extension PhotoViewCell {
             make.trailing.equalTo(likesLabel.snp.leading).offset(-8)
             make.verticalEdges.equalToSuperview().inset(8)
             make.leading.equalToSuperview().inset(12)
+        }
+    }
+}
+
+private extension PhotoViewCell {
+    func configureLayout() {
+        imageView.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+            make.height.equalTo(imageView.snp.width).multipliedBy(1.2)
+        }
+        
+        likesLabel.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(12)
+            make.verticalEdges.equalToSuperview().inset(8)
+        }
+        
+        likesLabelBackgroundView.snp.makeConstraints { make in
+            make.bottom.leading.equalToSuperview().inset(20)
         }
     }
 }

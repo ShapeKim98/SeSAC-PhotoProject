@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SearchClient {
+final class SearchClient {
     static let shared = SearchClient()
     
     private let provider = NetworkProvider<SearchEndPoint>()

@@ -7,6 +7,9 @@
 
 import UIKit
 
+import BaseKit
+
+@Configurable
 class VerticalCollectionView: UICollectionView {
     init(
         superSize: CGRect,
@@ -30,11 +33,6 @@ class VerticalCollectionView: UICollectionView {
         )
         
         backgroundColor = .clear
-    }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

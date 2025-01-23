@@ -8,8 +8,10 @@
 import UIKit
 
 import SnapKit
+import BaseKit
 
-class SearchCollectionViewCell: UICollectionViewCell {
+@Configurable
+final class SearchCollectionViewCell: UICollectionViewCell {
     private let photoCell: PhotoViewCell
     
     override init(frame: CGRect) {
@@ -21,10 +23,6 @@ class SearchCollectionViewCell: UICollectionViewCell {
         photoCell.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func layoutIfNeeded() {

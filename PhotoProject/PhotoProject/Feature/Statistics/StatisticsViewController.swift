@@ -10,8 +10,10 @@ import SwiftUI
 
 import Kingfisher
 import SnapKit
+import BaseKit
 
-class StatisticsViewController: UIViewController {
+@Configurable
+final class StatisticsViewController: UIViewController {
     private let imageView = UIImageView()
     private let profileImageView = UIImageView()
     private let nameLabel = UILabel()
@@ -37,56 +39,117 @@ class StatisticsViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .systemBackground
+        
         configureUI()
+        
+        addChild(chartController)
+        contentView.addSubview(chartController.view)
+        chartController.didMove(toParent: self)
         
         configureLayout()
         
         fetchStatistics()
     }
-}
-
-// MARK: Configure View
-private extension StatisticsViewController {
-    func configureUI() {
-        view.backgroundColor = .systemBackground
-        
-        configureNavigationBar()
-        
+    
+    private func configureScrollView() {
         scrollView.isScrollEnabled = true
         view.addSubview(scrollView)
         
         scrollView.addSubview(contentView)
-        
-        configureProfileImageView()
-        
-        configureNameLabel()
-        
-        configureCreatedAtLabel()
-        
-        configureImageView()
-        
-        configureInfoLabel()
-        
-        configureInfoVStack()
-        
-        configureInfoDetailLabel()
-        
-        configureChartLabel()
-        
-        configureActivityIndicator()
-        
-        addChild(chartController)
-        contentView.addSubview(chartController.view)
-        chartController.didMove(toParent: self)
     }
     
+    private func configureNavigationBar() {
+        navigationItem.largeTitleDisplayMode = .never
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.tintColor = .label
+        navigationController?.navigationBar.topItem?.title = ""
+    }
+    
+    private func configureProfileImageView() {
+        let url = URL(string: photo.user.profileImage.medium)
+        profileImageView.kf.setImage(
+            with: url,
+            options: [.transition(.fade(0.3))]
+        )
+        profileImageView.contentMode = .scaleAspectFit
+        profileImageView.layer.cornerRadius = 16
+        profileImageView.clipsToBounds = true
+        contentView.addSubview(profileImageView)
+    }
+    
+    private func configureImageView() {
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(
+            with: URL(string: photo.urls.regular)
+        )
+        imageView.contentMode = .scaleAspectFill
+        contentView.addSubview(imageView)
+    }
+    
+    private func configureNameLabel() {
+        nameLabel.text = photo.user.name
+        nameLabel.font = .systemFont(ofSize: 12)
+        contentView.addSubview(nameLabel)
+    }
+    
+    private func configureCreatedAtLabel() {
+        let date = photo.createdAt.date(format: .yyyy_MM_dd)
+        createdAtLabel.text = date?.string(format: .yyyy년_M월_d일)
+        createdAtLabel.font = .systemFont(ofSize: 10, weight: .bold)
+        contentView.addSubview(createdAtLabel)
+    }
+    
+    private func configureInfoLabel() {
+        infoLabel.text = "정보"
+        infoLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        contentView.addSubview(infoLabel)
+    }
+    
+    private func configureChartLabel() {
+        chartLabel.text = "차트"
+        chartLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        contentView.addSubview(chartLabel)
+    }
+    
+    private func configureInfoVStack() {
+        infoVStack.axis = .vertical
+        infoVStack.spacing = 12
+        infoVStack.distribution = .fillProportionally
+        contentView.addSubview(infoVStack)
+    }
+    
+    private func configureInfoDetailLabel() {
+        let size = InfoDetailLabel(
+            title: "크기",
+            value: "\(Int(photo.height)) x \(Int(photo.width))"
+        )
+        infoDetailLabels.append(size)
+        infoVStack.addArrangedSubview(size)
+        let views = InfoDetailLabel(
+            title: "조회수",
+            value: statistics?.views.total.formatted() ?? "0"
+        )
+        infoDetailLabels.append(views)
+        infoVStack.addArrangedSubview(views)
+        let downloads = InfoDetailLabel(
+            title: "다운로드",
+            value: statistics?.downloads.total.formatted() ?? "0"
+        )
+        infoDetailLabels.append(downloads)
+        infoVStack.addArrangedSubview(downloads)
+    }
+    
+    private func configureActivityIndicator() {
+        view.addSubview(activityIndicatorView)
+    }
+}
+
+// MARK: Configure View
+private extension StatisticsViewController {
     func configureLayout() {
         scrollView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
@@ -151,94 +214,6 @@ private extension StatisticsViewController {
             make.bottom.equalToSuperview()
         }
     }
-    
-    func configureNavigationBar() {
-        navigationItem.largeTitleDisplayMode = .never
-        navigationController?.navigationBar.prefersLargeTitles = false
-        navigationController?.navigationBar.tintColor = .label
-        navigationController?.navigationBar.topItem?.title = ""
-    }
-    
-    func configureProfileImageView() {
-        let url = URL(string: photo.user.profileImage.medium)
-        profileImageView.kf.setImage(with: url)
-        profileImageView.contentMode = .scaleAspectFit
-        profileImageView.layer.cornerRadius = 16
-        profileImageView.clipsToBounds = true
-        contentView.addSubview(profileImageView)
-    }
-    
-    func configureImageView() {
-        let size = imageView.bounds.size
-        imageView.kf.indicatorType = .activity
-        imageView.kf.setImage(
-            with: URL(string: photo.urls.raw),
-            options: [
-                .processor(DownsamplingImageProcessor(size: size)),
-                .scaleFactor(UIScreen.main.scale),
-                .cacheOriginalImage
-            ]
-        )
-        imageView.contentMode = .scaleAspectFill
-        contentView.addSubview(imageView)
-    }
-    
-    func configureNameLabel() {
-        nameLabel.text = photo.user.name
-        nameLabel.font = .systemFont(ofSize: 12)
-        contentView.addSubview(nameLabel)
-    }
-    
-    func configureCreatedAtLabel() {
-        let date = photo.createdAt.date(format: .yyyy_MM_dd)
-        createdAtLabel.text = date?.string(format: .yyyy년_M월_d일)
-        createdAtLabel.font = .systemFont(ofSize: 10, weight: .bold)
-        contentView.addSubview(createdAtLabel)
-    }
-    
-    func configureInfoLabel() {
-        infoLabel.text = "정보"
-        infoLabel.font = .systemFont(ofSize: 20, weight: .bold)
-        contentView.addSubview(infoLabel)
-    }
-    
-    func configureChartLabel() {
-        chartLabel.text = "차트"
-        chartLabel.font = .systemFont(ofSize: 20, weight: .bold)
-        contentView.addSubview(chartLabel)
-    }
-    
-    func configureInfoVStack() {
-        infoVStack.axis = .vertical
-        infoVStack.spacing = 12
-        infoVStack.distribution = .fillProportionally
-        contentView.addSubview(infoVStack)
-    }
-    
-    func configureInfoDetailLabel() {
-        let size = InfoDetailLabel(
-            title: "크기",
-            value: "\(Int(photo.height)) x \(Int(photo.width))"
-        )
-        infoDetailLabels.append(size)
-        infoVStack.addArrangedSubview(size)
-        let views = InfoDetailLabel(
-            title: "조회수",
-            value: statistics?.views.total.formatted() ?? "0"
-        )
-        infoDetailLabels.append(views)
-        infoVStack.addArrangedSubview(views)
-        let downloads = InfoDetailLabel(
-            title: "다운로드",
-            value: statistics?.downloads.total.formatted() ?? "0"
-        )
-        infoDetailLabels.append(downloads)
-        infoVStack.addArrangedSubview(downloads)
-    }
-    
-    func configureActivityIndicator() {
-        view.addSubview(activityIndicatorView)
-    }
 }
 
 // MARK: Data Bindings
@@ -278,7 +253,7 @@ private extension StatisticsViewController {
 }
 
 private extension StatisticsViewController {
-    class InfoDetailLabel: UIView {
+    final class InfoDetailLabel: UIView {
         private let titleLabel = UILabel()
         private let valueLabel = UILabel()
         

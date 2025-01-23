@@ -7,20 +7,31 @@
 
 import UIKit
 import SnapKit
+import BaseKit
 
 protocol LevelViewControllerDelegate: AnyObject {
     func okLevelButtonTapped(_ level: String?)
 }
 
+@Configurable
 class LevelViewController: UIViewController {
-
-    let segmentedControl = UISegmentedControl(items: ["상", "중", "하"])
+    static let segmentItems = ["상", "중", "하"]
+    
+    let segmentedControl = UISegmentedControl(items: LevelViewController.segmentItems)
     
     weak var delegate: (any LevelViewControllerDelegate)?
     
+    init(level: String?) {
+        let index = LevelViewController.segmentItems.firstIndex(of: level ?? "") ?? 0
+        print(index)
+        segmentedControl.selectedSegmentIndex = index
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
+        configureUI()
     }
     
     @objc func okButtonTapped() {
@@ -40,6 +51,5 @@ class LevelViewController: UIViewController {
             make.centerX.top.equalTo(view.safeAreaLayoutGuide)
             make.width.equalTo(view.safeAreaLayoutGuide).inset(24)
         }
-        segmentedControl.selectedSegmentIndex = 0
     }
 }

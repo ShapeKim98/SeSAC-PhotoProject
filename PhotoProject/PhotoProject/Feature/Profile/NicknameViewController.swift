@@ -18,9 +18,12 @@ final class NicknameViewController: UIViewController {
     private let textField = UITextField()
     private var delegateAction: ((Delegate) -> Void)?
     
-    init(delegateAction: ((Delegate) -> Void)?) {
+    init(
+        nickname: String?,
+        delegateAction: ((Delegate) -> Void)?
+    ) {
         self.delegateAction = delegateAction
-        
+        self.textField.text = nickname
         super.init(nibName: nil, bundle: nil)
     }
     

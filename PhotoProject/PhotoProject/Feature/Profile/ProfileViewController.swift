@@ -130,7 +130,9 @@ class ProfileViewController: UIViewController {
 private extension ProfileViewController {
     @objc
     func nicknameButtonTouchUpInside() {
+        let nickname = nicknameLabel.text
         let viewController = NicknameViewController(
+            nickname: nickname == "NO NAME" ? nil : nickname,
             delegateAction: scopeNicknameViewController
         )
         push(viewController)
@@ -138,12 +140,14 @@ private extension ProfileViewController {
     
     @objc
     func birthdayButtonTouchUpInside() {
-        push(BirthdayViewController())
+        let birthday = birthdayLabel.text
+        push(BirthdayViewController(birthday: birthday))
     }
     
     @objc
     func levelButtonTouchUpInside() {
-        let viewController = LevelViewController()
+        let level = levelLabel.text
+        let viewController = LevelViewController(level: level)
         viewController.delegate = self
         push(viewController)
     }
@@ -159,7 +163,8 @@ private extension ProfileViewController {
     ) {
         switch action {
         case .okButtonTapped(let nickname):
-            nicknameLabel.text = nickname
+            let isEmpty = nickname?.isEmpty ?? true
+            nicknameLabel.text = isEmpty ? "NO NAME" : nickname
         }
     }
 }

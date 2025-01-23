@@ -7,14 +7,23 @@
 
 import UIKit
 import SnapKit
+import BaseKit
 
+@Configurable
 class BirthdayViewController: UIViewController {
 
     let datePicker = UIDatePicker()
     
+    init(birthday: String?) {
+        let date = birthday?.date(format: .yyyy년_M월_d일)
+        datePicker.date = date ?? .now
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
+        configureUI()
     }
     
     @objc func okButtonTapped() {

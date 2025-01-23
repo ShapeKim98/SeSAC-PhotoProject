@@ -15,7 +15,9 @@ struct UserDefaults<T> {
     init(forKey: String, defaultValue: T? = nil) {
         self.key = forKey
         self.defaultValue = defaultValue
-        if self.defaultValue == nil {
+        let object = Foundation.UserDefaults.standard.object(forKey: forKey)
+        print(object)
+        if object == nil && defaultValue != nil {
             Foundation.UserDefaults.standard.set(defaultValue, forKey: key)
         }
     }
@@ -36,6 +38,7 @@ enum UserDefaultsKey: String {
     case nickname = "Nickname"
     case birthday = "Birthday"
     case level = "Level"
+    case authenticated = "Authenticated"
 }
 
 extension String {

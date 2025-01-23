@@ -12,6 +12,11 @@ final class OnboardingViewController: UIViewController {
 
     private let button = UIButton()
     
+    @UserDefaults(
+        forKey: .userDefaults(.authenticated)
+    )
+    private var authenticated: Bool?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .darkGray
@@ -34,6 +39,8 @@ final class OnboardingViewController: UIViewController {
     @objc
     func buttonTouchUpInside() {
         let viewController = ProfileViewController()
+        authenticated = true
+        print(authenticated)
         switchRoot(UINavigationController(
             rootViewController: viewController
         ))

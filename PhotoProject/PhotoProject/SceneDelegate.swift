@@ -11,6 +11,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
+    @UserDefaults(
+        forKey: .userDefaults(.authenticated),
+        defaultValue: false
+    )
+    private var authenticated: Bool?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -18,8 +23,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let scene = (scene as? UIWindowScene) else { return }
         window?.windowScene = scene
-        
-        let root = OnboardingViewController()
+        var root: UIViewController
+        if let authenticated, authenticated {
+            root = UINavigationController(
+                rootViewController: ProfileViewController()
+            )
+        } else {
+            root = OnboardingViewController()
+        }
         window?.rootViewController = root
         window?.makeKeyAndVisible()
     }

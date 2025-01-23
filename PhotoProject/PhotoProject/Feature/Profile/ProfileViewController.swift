@@ -20,6 +20,10 @@ class ProfileViewController: UIViewController {
     private let levelLabel = UILabel()
     
     @UserDefaults(
+        forKey: .userDefaults(.authenticated)
+    )
+    private var authenticated: Bool?
+    @UserDefaults(
         forKey: .userDefaults(.nickname),
         defaultValue: "NO NAME"
     )
@@ -49,6 +53,8 @@ class ProfileViewController: UIViewController {
     @objc
     private func okButtonTapped() {
         print(#function)
+        authenticated = false
+        switchRoot(OnboardingViewController())
     }
     
     private func configureView() {

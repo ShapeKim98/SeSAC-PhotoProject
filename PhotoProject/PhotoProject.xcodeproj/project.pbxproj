@@ -10,15 +10,11 @@
 		C912D0A82D3B9DC4004219F7 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = C912D0A72D3B9DC4004219F7 /* Kingfisher */; };
 		C912D0AB2D3B9DD1004219F7 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C912D0AA2D3B9DD1004219F7 /* SnapKit */; };
 		C912D0AE2D3B9DE8004219F7 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C912D0AD2D3B9DE8004219F7 /* Alamofire */; };
-		C9D356CB2D40E73B003F095C /* BaseKit in Frameworks */ = {isa = PBXBuildFile; productRef = C9D356CA2D40E73B003F095C /* BaseKit */; };
-		C9D356CF2D40EA78003F095C /* BaseKit in Frameworks */ = {isa = PBXBuildFile; productRef = C9D356CE2D40EA78003F095C /* BaseKit */; };
-		C9D357B32D40F83E003F095C /* BaseKit in Frameworks */ = {isa = PBXBuildFile; productRef = C9D357B22D40F83E003F095C /* BaseKit */; };
-		C9D357B52D40F83E003F095C /* BaseKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = C9D357B42D40F83E003F095C /* BaseKitClient */; };
+		C99885432D42347600F33E44 /* BaseKit in Frameworks */ = {isa = PBXBuildFile; productRef = C99885422D42347600F33E44 /* BaseKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		C912D07E2D3B9184004219F7 /* PhotoProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9D356CC2D40E805003F095C /* BaseKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BaseKit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -47,12 +43,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9D357B32D40F83E003F095C /* BaseKit in Frameworks */,
 				C912D0AE2D3B9DE8004219F7 /* Alamofire in Frameworks */,
 				C912D0A82D3B9DC4004219F7 /* Kingfisher in Frameworks */,
-				C9D356CB2D40E73B003F095C /* BaseKit in Frameworks */,
-				C9D357B52D40F83E003F095C /* BaseKitClient in Frameworks */,
-				C9D356CF2D40EA78003F095C /* BaseKit in Frameworks */,
+				C99885432D42347600F33E44 /* BaseKit in Frameworks */,
 				C912D0AB2D3B9DD1004219F7 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,7 +56,6 @@
 		C912D0752D3B9184004219F7 = {
 			isa = PBXGroup;
 			children = (
-				C9D356CC2D40E805003F095C /* BaseKit */,
 				C912D0802D3B9184004219F7 /* PhotoProject */,
 				C912D07F2D3B9184004219F7 /* Products */,
 			);
@@ -100,10 +92,7 @@
 				C912D0A72D3B9DC4004219F7 /* Kingfisher */,
 				C912D0AA2D3B9DD1004219F7 /* SnapKit */,
 				C912D0AD2D3B9DE8004219F7 /* Alamofire */,
-				C9D356CA2D40E73B003F095C /* BaseKit */,
-				C9D356CE2D40EA78003F095C /* BaseKit */,
-				C9D357B22D40F83E003F095C /* BaseKit */,
-				C9D357B42D40F83E003F095C /* BaseKitClient */,
+				C99885422D42347600F33E44 /* BaseKit */,
 			);
 			productName = PhotoProject;
 			productReference = C912D07E2D3B9184004219F7 /* PhotoProject.app */;
@@ -137,7 +126,7 @@
 				C912D0A62D3B9DC4004219F7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				C912D0A92D3B9DD1004219F7 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				C912D0AC2D3B9DE8004219F7 /* XCRemoteSwiftPackageReference "Alamofire" */,
-				C9D357B12D40F83E003F095C /* XCLocalSwiftPackageReference "BaseKit" */,
+				C99885412D42347600F33E44 /* XCLocalSwiftPackageReference "BaseKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C912D07F2D3B9184004219F7 /* Products */;
@@ -373,7 +362,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		C9D357B12D40F83E003F095C /* XCLocalSwiftPackageReference "BaseKit" */ = {
+		C99885412D42347600F33E44 /* XCLocalSwiftPackageReference "BaseKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = BaseKit;
 		};
@@ -422,21 +411,9 @@
 			package = C912D0AC2D3B9DE8004219F7 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
-		C9D356CA2D40E73B003F095C /* BaseKit */ = {
+		C99885422D42347600F33E44 /* BaseKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BaseKit;
-		};
-		C9D356CE2D40EA78003F095C /* BaseKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BaseKit;
-		};
-		C9D357B22D40F83E003F095C /* BaseKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BaseKit;
-		};
-		C9D357B42D40F83E003F095C /* BaseKitClient */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BaseKitClient;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

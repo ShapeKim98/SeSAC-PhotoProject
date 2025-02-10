@@ -216,7 +216,8 @@ private extension StatisticsViewController {
 // MARK: Data Bindings
 private extension StatisticsViewController {
     func dataBinding() {
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             for await output in viewModel.output {
                 switch output {
                 case let .statistics(statistics):

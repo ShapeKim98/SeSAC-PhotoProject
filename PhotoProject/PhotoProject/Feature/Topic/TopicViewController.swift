@@ -236,7 +236,8 @@ extension TopicViewController: UICollectionViewDelegate,
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let topic = topics[collectionView.tag][indexPath.item]
-        let statisticsViewController = StatisticsViewController(photo: topic)
+        let viewModel = StatisticViewModel(photo: topic)
+        let statisticsViewController = StatisticsViewController(viewModel: viewModel)
         statisticsViewController.preferredTransition = .zoom { context in
             return collectionView.cellForItem(at: indexPath)
         }

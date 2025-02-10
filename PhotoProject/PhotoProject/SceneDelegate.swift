@@ -31,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         } else {
             root = OnboardingViewController()
         }
-        window?.rootViewController = root
+        window?.rootViewController = ViewController()
         window?.makeKeyAndVisible()
     }
 

@@ -394,7 +394,8 @@ extension SearchViewController: UICollectionViewDelegate,
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let search else { return }
         let result = search.results[indexPath.item]
-        let statisticsViewController = StatisticsViewController(photo: result)
+        let viewModel = StatisticViewModel(photo: result)
+        let statisticsViewController = StatisticsViewController(viewModel: viewModel)
         statisticsViewController.preferredTransition = .zoom { context in
             return collectionView.cellForItem(at: indexPath)
         }

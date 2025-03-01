@@ -7,19 +7,19 @@
 
 import Foundation
 
-struct StatisticsResponse: Decodable {
+struct StatisticsResponse: Decodable, Equatable {
     let id: String
     let downloads: DownLoads
     let views: Views
 }
 
 extension StatisticsResponse {
-    struct DownLoads: Decodable {
+    struct DownLoads: Decodable, Equatable {
         let total: Int
         let historical: Historical
     }
     
-    struct Views: Decodable {
+    struct Views: Decodable, Equatable {
         let total: Int
         let historical: Historical
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Historical: Decodable {
+struct Historical: Decodable, Equatable {
     let values: [Value]
 }
 

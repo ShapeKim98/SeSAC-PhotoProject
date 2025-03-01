@@ -27,20 +27,17 @@ final class StatisticsViewController: UIViewController {
     private let activityIndicatorView = UIActivityIndicatorView(style: .large)
     private var chartController = UIHostingController(rootView: StatisticChartView())
     
-    private let photo: PhotoCellProtocol
-    private var statistics: StatisticsResponse? {
-        didSet { didSetStatistics() }
-    }
+    private let viewModel: StatisticViewModel
     
-    private let statisticsClient = StatisticsClient.shared
-    
-    init(photo: PhotoCellProtocol = [TopicResponse].mock[0]) {
-        self.photo = photo
+    init(viewModel: StatisticViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        dataBinding()
         
         view.backgroundColor = .systemBackground
         
@@ -52,7 +49,7 @@ final class StatisticsViewController: UIViewController {
         
         configureLayout()
         
-        fetchStatistics()
+        viewModel.input(.viewDidLoad)
     }
     
     private func configureScrollView() {
@@ -70,7 +67,7 @@ final class StatisticsViewController: UIViewController {
     }
     
     private func configureProfileImageView() {
-        let url = URL(string: photo.user.profileImage.medium)
+        let url = URL(string: viewModel.model.photo.user.profileImage.medium)
         profileImageView.kf.setImage(
             with: url,
             options: [.transition(.fade(0.3))]
@@ -84,20 +81,20 @@ final class StatisticsViewController: UIViewController {
     private func configureImageView() {
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(
-            with: URL(string: photo.urls.regular)
+            with: URL(string: viewModel.model.photo.urls.regular)
         )
         imageView.contentMode = .scaleAspectFill
         contentView.addSubview(imageView)
     }
     
     private func configureNameLabel() {
-        nameLabel.text = photo.user.name
+        nameLabel.text = viewModel.model.photo.user.name
         nameLabel.font = .systemFont(ofSize: 12)
         contentView.addSubview(nameLabel)
     }
     
     private func configureCreatedAtLabel() {
-        let date = photo.createdAt.date(format: .yyyy_MM_dd)
+        let date = viewModel.model.photo.createdAt.date(format: .yyyy_MM_dd)
         createdAtLabel.text = date?.string(format: .yyyy년_M월_d일)
         createdAtLabel.font = .systemFont(ofSize: 10, weight: .bold)
         contentView.addSubview(createdAtLabel)
@@ -125,19 +122,19 @@ final class StatisticsViewController: UIViewController {
     private func configureInfoDetailLabel() {
         let size = InfoDetailLabel(
             title: "크기",
-            value: "\(Int(photo.height)) x \(Int(photo.width))"
+            value: "\(Int(viewModel.model.photo.height)) x \(Int(viewModel.model.photo.width))"
         )
         infoDetailLabels.append(size)
         infoVStack.addArrangedSubview(size)
         let views = InfoDetailLabel(
             title: "조회수",
-            value: statistics?.views.total.formatted() ?? "0"
+            value: viewModel.model.statistics?.views.total.formatted() ?? "0"
         )
         infoDetailLabels.append(views)
         infoVStack.addArrangedSubview(views)
         let downloads = InfoDetailLabel(
             title: "다운로드",
-            value: statistics?.downloads.total.formatted() ?? "0"
+            value: viewModel.model.statistics?.downloads.total.formatted() ?? "0"
         )
         infoDetailLabels.append(downloads)
         infoVStack.addArrangedSubview(downloads)
@@ -179,7 +176,7 @@ private extension StatisticsViewController {
         imageView.snp.makeConstraints { make in
             make.width.equalToSuperview()
             make.height.equalTo(contentView.snp.width)
-                .multipliedBy(photo.height / photo.width)
+                .multipliedBy(viewModel.model.photo.height / viewModel.model.photo.width)
             
             make.top.equalTo(profileImageView.snp.bottom).offset(16)
         }
@@ -218,7 +215,21 @@ private extension StatisticsViewController {
 
 // MARK: Data Bindings
 private extension StatisticsViewController {
-    func didSetStatistics() {
+    func dataBinding() {
+        Task { [weak self] in
+            guard let self else { return }
+            for await output in viewModel.output {
+                switch output {
+                case let .statistics(statistics):
+                    bindedStatistics(statistics)
+                case let .errorMessage(message):
+                    bindedErrorMessage(message)
+                }
+            }
+        }
+    }
+    
+    func bindedStatistics(_ statistics: StatisticsResponse?) {
         guard let statistics else { return }
         
         let views = statistics.views.total.formatted()
@@ -230,25 +241,9 @@ private extension StatisticsViewController {
         activityIndicatorView.isHidden = true
         activityIndicatorView.stopAnimating()
     }
-}
-
-// MARK: Functions
-private extension StatisticsViewController {
-    func fetchStatistics() {
-        statisticsClient.fetchStatistics(photo.id) { [weak self] result in
-            guard let `self` else { return }
-            switch result {
-            case .success(let success):
-                self.statistics = success
-            case .failure(let failure):
-                if let baseError = failure as? BaseError {
-                    let message =  baseError.errors.joined(separator: "\n")
-                    self.presentAlert(title: "오류", message: message)
-                } else {
-                    print(failure)
-                }
-            }
-        }
+    
+    func bindedErrorMessage(_ message: String?) {
+        presentAlert(title: "오류", message: message)
     }
 }
 

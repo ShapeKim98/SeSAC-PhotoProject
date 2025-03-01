@@ -24,14 +24,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window?.windowScene = scene
         var root: UIViewController
-        if let authenticated, authenticated {
-            root = UINavigationController(
-                rootViewController: ProfileViewController()
-            )
-        } else {
-            root = OnboardingViewController()
-        }
-        window?.rootViewController = root
+//        if let authenticated, authenticated {
+//            root = UINavigationController(
+//                rootViewController: ProfileViewController()
+//            )
+//        } else {
+//            root = OnboardingViewController()
+//        }
+        window?.rootViewController = ViewController()
         window?.makeKeyAndVisible()
     }
 
